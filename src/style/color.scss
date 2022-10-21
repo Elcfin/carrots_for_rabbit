@@ -1,0 +1,11 @@
+body {
+  --primary-d: rgba(var(--semi-yellow-5), 1);
+  --primary: rgba(var(--semi-yellow-3), 1);
+  --primary-l: rgba(var(--semi-yellow-0), 1);
+
+  --bg-l: var(--semi-color-nav-bg);
+  --bg: rgba(var(--semi-grey-0), 1);
+  --bg-d: rgba(var(--semi-grey-1), 1);
+  --on-bg: var(--semi-color-text-0);
+  --on-bg-l: var(--semi-color-text-2);
+}
