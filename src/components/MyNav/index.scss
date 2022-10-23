@@ -1,7 +1,17 @@
 .nav {
+  position: fixed;
+  left: 50%;
+  top: 0;
+  transform: translate(-50%);
+  min-width: min(1440px, 100vw);
+  z-index: 1000;
   &-btn-float {
     position: absolute;
     right: 20px;
     bottom: 20px;
   }
+}
+
+.x {
+  height: 60px;
 }

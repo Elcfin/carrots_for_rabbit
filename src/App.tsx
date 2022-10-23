@@ -14,6 +14,7 @@ const App = () => (
         })}
       </Routes>
     </div>
+    <div className="app-background"></div>
   </div>
 );
 export default App;

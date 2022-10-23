@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-const THRESHOLD = 600;
+const THRESHOLD = 680;
 
 const getWindowSize = () => ({
   innerHeight: window.innerHeight,

@@ -1,20 +1,32 @@
 .app {
-  background-color: var(--bg);
+  background-color: var(--semi-color-bg-1);
   min-height: 100vh;
   max-width: 1440px;
   margin: auto;
 
+  /*   &-background {
+    position: fixed;
+    width: 100vw;
+    height: 300px;
+    left: 0;
+    top: 0;
+    background-color: var(--semi-color-primary);
+  }
+ */
   &-main {
+    position: relative;
     margin: auto;
-    margin-top: 1rem;
     padding: 20px;
-    max-width: 1140px;
-    background-color: var(--bg-l);
-    box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 1px;
+    padding-top: 0;
+    max-width: 920px;
+    background-color: var(--semi-color-bg-1);
+    /* box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 1px; */
+    z-index: 10;
 
-    @media (min-width: 600px) {
+    @media (min-width: 680px) {
       // PC端
       padding: 40px;
+      padding-top: 0;
     }
   }
 }

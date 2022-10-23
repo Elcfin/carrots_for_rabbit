@@ -1,0 +1,12 @@
+.search {
+  &-results {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+
+    @media (min-width: 680px) {
+      gap: 10px;
+    }
+  }
+}

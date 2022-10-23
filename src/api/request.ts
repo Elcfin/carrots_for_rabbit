@@ -39,7 +39,7 @@ export default async function _request<Data>(
 ): Promise<Data | null> {
   const instance = axios.create({
     baseURL: SERVER_BASE_URL,
-    timeout: 60000,
+    timeout: 68000,
   });
   const token = localStorage.getItem(TOKEN_KEY);
   if (token) {
@@ -82,7 +82,7 @@ export default async function _request<Data>(
 
     let errMsg = DEFAULT_ERR_MSG;
     if (typeof err === "string") {
-      /** 我自己 throw 的 error */
+      /** 自己 throw 的 error */
       errMsg = err;
     } else if ((err as AxiosError).isAxiosError) {
       /** http 状态码不为 200 */

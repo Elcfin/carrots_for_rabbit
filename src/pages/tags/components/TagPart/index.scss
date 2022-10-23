@@ -1,0 +1,11 @@
+.tag_part {
+  &-card {
+    width: 360px;
+    height: 160px;
+    border: solid 1px var(--semi-color-border);
+    @media (min-width: 680px) {
+      width: 260px;
+      height: 200px;
+    }
+  }
+}
