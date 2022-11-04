@@ -1,26 +1,14 @@
 import "./index.scss";
 
-import {
-  IconArrowLeft,
-  IconArrowRight,
-  IconChevronLeft,
-  IconChevronRight,
-  IconSmallTriangleRight,
-} from "@douyinfe/semi-icons";
-import { Carousel, Typography, Space, Button } from "@douyinfe/semi-ui";
+import { IconChevronLeft, IconChevronRight } from "@douyinfe/semi-icons";
+import { Carousel, Button } from "@douyinfe/semi-ui";
 
-const MyCarousel = () => {
-  const { Title, Paragraph } = Typography;
+interface MyCarouselPropsType {
+  imgList: string[];
+}
 
-  const colorStyle = {
-    color: "#1C1F23",
-  };
-
-  const imgList = [
-    "https://lf3-static.bytednsdoc.com/obj/eden-cn/hjeh7pldnulm/SemiDocs/bg-1.png",
-    "https://lf3-static.bytednsdoc.com/obj/eden-cn/hjeh7pldnulm/SemiDocs/bg-2.png",
-    "https://lf3-static.bytednsdoc.com/obj/eden-cn/hjeh7pldnulm/SemiDocs/bg-3.png",
-  ];
+const MyCarousel = (props: MyCarouselPropsType) => {
+  const { imgList } = props;
 
   return (
     <Carousel

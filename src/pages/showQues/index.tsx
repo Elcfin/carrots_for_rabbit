@@ -20,7 +20,7 @@ import {
   IconPlus,
 } from "@douyinfe/semi-icons";
 import { useState } from "react";
-import MyCarousel from "./components/MyCarousel";
+import MyCarousel from "../../components/MyCarousel";
 import { useScreen } from "../../hooks/useScreen";
 
 const ShowQues = () => {
@@ -86,7 +86,13 @@ const ShowQues = () => {
               >{`发布时间：2022 年 10 月 22 日`}</Text>
             </div>
             <div className="show_ques-x-imgs">
-              <MyCarousel />
+              <MyCarousel
+                imgList={[
+                  "https://lf3-static.bytednsdoc.com/obj/eden-cn/hjeh7pldnulm/SemiDocs/bg-1.png",
+                  "https://lf3-static.bytednsdoc.com/obj/eden-cn/hjeh7pldnulm/SemiDocs/bg-2.png",
+                  "https://lf3-static.bytednsdoc.com/obj/eden-cn/hjeh7pldnulm/SemiDocs/bg-3.png",
+                ]}
+              />
             </div>
             <div className="show_ques-x-content">
               <Paragraph spacing="extended">

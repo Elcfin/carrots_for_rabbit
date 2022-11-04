@@ -21,5 +21,11 @@
       gap: 10px;
       flex-wrap: wrap;
     }
+
+    &-imgs {
+      display: flex;
+      gap: 16px;
+      flex-direction: column;
+    }
   }
 }

@@ -7,24 +7,31 @@ import {
   TabPane,
   Tabs,
   TextArea,
+  Upload,
 } from "@douyinfe/semi-ui";
 import { useNavigate } from "react-router";
-import { IconClose, IconPlus } from "@douyinfe/semi-icons";
+import { IconClose, IconPlus, IconUpload } from "@douyinfe/semi-icons";
 import { useState } from "react";
 import { TAGNAMELIST, TagNameType } from "../../constants/info";
 import { showToast } from "../../utils/showToast";
+import MyCarousel from "../../components/MyCarousel";
 
 const AskQues = () => {
   const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [selectedTags, setSelectedTags] = useState<TagNameType[]>([]);
+  const [imgs, setImgs] = useState<string[]>([
+    "https://lf3-static.bytednsdoc.com/obj/eden-cn/hjeh7pldnulm/SemiDocs/bg-1.png",
+    "https://lf3-static.bytednsdoc.com/obj/eden-cn/hjeh7pldnulm/SemiDocs/bg-2.png",
+    "https://lf3-static.bytednsdoc.com/obj/eden-cn/hjeh7pldnulm/SemiDocs/bg-3.png",
+  ]);
 
   const handleAddTagBtnClick = (tagName: TagNameType) => {
-    if (selectedTags.length >= 3) {
+    /* if (selectedTags.length >= 3) {
       showToast("最多添加三个标签", "info");
       return;
-    }
+    } */
     if (selectedTags.includes(tagName)) {
       showToast("该标签已添加", "info");
     } else {
@@ -37,6 +44,8 @@ const AskQues = () => {
       selectedTags.filter((selectedTag) => selectedTag !== tagName)
     );
   };
+
+  const handlePublish = () => {};
 
   return (
     <div className="ask_ques">
@@ -87,28 +96,35 @@ const AskQues = () => {
                   />
                 </SplitButtonGroup>
               ))}
-              <Dropdown
-                position={"bottom"}
-                clickToHide={true}
-                render={
-                  <Dropdown.Menu>
-                    {TAGNAMELIST.map((tagName) => (
-                      <Dropdown.Item
-                        key={tagName}
-                        onClick={() => {
-                          handleAddTagBtnClick(tagName);
-                        }}
-                      >
-                        {tagName}
-                      </Dropdown.Item>
-                    ))}
-                  </Dropdown.Menu>
-                }
-              >
-                <Button icon={<IconPlus size={"small"} />} iconPosition="right">
-                  添加标签
-                </Button>
-              </Dropdown>
+              {selectedTags.length >= 3 ? (
+                <Button disabled={true}>最多添加三个标签</Button>
+              ) : (
+                <Dropdown
+                  position={"bottom"}
+                  clickToHide={true}
+                  render={
+                    <Dropdown.Menu>
+                      {TAGNAMELIST.map((tagName) => (
+                        <Dropdown.Item
+                          key={tagName}
+                          onClick={() => {
+                            handleAddTagBtnClick(tagName);
+                          }}
+                        >
+                          {tagName}
+                        </Dropdown.Item>
+                      ))}
+                    </Dropdown.Menu>
+                  }
+                >
+                  <Button
+                    icon={<IconPlus size={"small"} />}
+                    iconPosition="right"
+                  >
+                    添加标签
+                  </Button>
+                </Dropdown>
+              )}
             </div>
             <div className="ask_ques-x-content">
               <TextArea
@@ -120,7 +136,30 @@ const AskQues = () => {
                 }}
               />
             </div>
-            <div className="ask_ques-x-imgs"></div>
+            <div className="ask_ques-x-imgs">
+              <div className="ask_ques-x-imgs-upload">
+                <Upload
+                  fileList={[]}
+                  accept={"image/*"}
+                  onChange={(e) => {
+                    // 获取到的当前文件实例，可以用于发送请求获得图片链接
+                    const file = e.currentFile.fileInstance;
+                    console.log(file);
+                  }}
+                >
+                  <Button icon={<IconUpload />} theme="light">
+                    点击上传图片
+                  </Button>
+                </Upload>
+              </div>
+              {imgs.length > 0 ? (
+                <div className="ask_ques-x-imgs-list">
+                  <MyCarousel imgList={imgs} />
+                </div>
+              ) : (
+                <></>
+              )}
+            </div>
           </div>
         </TabPane>
       </Tabs>
