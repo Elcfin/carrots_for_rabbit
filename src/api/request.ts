@@ -62,6 +62,7 @@ export default async function _request<Data>(
   try {
     /** 执行请求 */
     const res = await instance.request<BaseHttpInfo<Data>>(config);
+    console.log("res", res);
     if (res.status === 200 && res.data && res.data.success) {
       const data = res.data.data;
       /** 成功一定会 resolve 非空 */

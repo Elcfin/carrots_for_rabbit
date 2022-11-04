@@ -1,28 +1,43 @@
 import "./index.scss";
 import {
   Button,
+  Dropdown,
   Input,
   SplitButtonGroup,
   TabPane,
   Tabs,
-  TagGroup,
   TextArea,
-  Upload,
 } from "@douyinfe/semi-ui";
 import { useNavigate } from "react-router";
-import {
-  IconClose,
-  IconCrossCircleStroked,
-  IconCrossStroked,
-  IconEyeOpened,
-  IconPlus,
-} from "@douyinfe/semi-icons";
+import { IconClose, IconPlus } from "@douyinfe/semi-icons";
 import { useState } from "react";
+import { TAGNAMELIST, TagNameType } from "../../constants/info";
+import { showToast } from "../../utils/showToast";
 
 const AskQues = () => {
   const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [selectedTags, setSelectedTags] = useState<TagNameType[]>([]);
+
+  const handleAddTagBtnClick = (tagName: TagNameType) => {
+    if (selectedTags.length >= 3) {
+      showToast("最多添加三个标签", "info");
+      return;
+    }
+    if (selectedTags.includes(tagName)) {
+      showToast("该标签已添加", "info");
+    } else {
+      setSelectedTags((selectedTags) => [...selectedTags, tagName]);
+    }
+  };
+
+  const handleDeleteTagClick = (tagName: TagNameType) => {
+    setSelectedTags((selectedTags) =>
+      selectedTags.filter((selectedTag) => selectedTag !== tagName)
+    );
+  };
+
   return (
     <div className="ask_ques">
       <Tabs type="line">
@@ -52,45 +67,48 @@ const AskQues = () => {
               </Button>
             </div>
             <div className="ask_ques-x-tags">
-              <SplitButtonGroup>
-                <Button
-                  disabled
-                  style={{
-                    color: "var(--semi-color-carrot-dark)",
-                    cursor: "default",
-                  }}
-                >
-                  编译原理
+              {selectedTags.map((tagName) => (
+                <SplitButtonGroup>
+                  <Button
+                    disabled
+                    style={{
+                      color: "var(--semi-color-carrot-dark)",
+                      cursor: "default",
+                    }}
+                    key="tagName"
+                  >
+                    {tagName}
+                  </Button>
+                  <Button
+                    icon={<IconClose size={"small"} />}
+                    onClick={() => {
+                      handleDeleteTagClick(tagName);
+                    }}
+                  />
+                </SplitButtonGroup>
+              ))}
+              <Dropdown
+                position={"bottom"}
+                clickToHide={true}
+                render={
+                  <Dropdown.Menu>
+                    {TAGNAMELIST.map((tagName) => (
+                      <Dropdown.Item
+                        key={tagName}
+                        onClick={() => {
+                          handleAddTagBtnClick(tagName);
+                        }}
+                      >
+                        {tagName}
+                      </Dropdown.Item>
+                    ))}
+                  </Dropdown.Menu>
+                }
+              >
+                <Button icon={<IconPlus size={"small"} />} iconPosition="right">
+                  添加标签
                 </Button>
-                <Button icon={<IconClose size={"small"} />} />
-              </SplitButtonGroup>
-              <SplitButtonGroup>
-                <Button
-                  disabled
-                  style={{
-                    color: "var(--semi-color-carrot-dark)",
-                    cursor: "default",
-                  }}
-                >
-                  数据库
-                </Button>
-                <Button icon={<IconClose size={"small"} />} />
-              </SplitButtonGroup>
-              <SplitButtonGroup>
-                <Button
-                  disabled
-                  style={{
-                    color: "var(--semi-color-carrot-dark)",
-                    cursor: "default",
-                  }}
-                >
-                  数据库
-                </Button>
-                <Button icon={<IconClose size={"small"} />} />
-              </SplitButtonGroup>
-              <Button icon={<IconPlus size={"small"} />} iconPosition="right">
-                添加标签
-              </Button>
+              </Dropdown>
             </div>
             <div className="ask_ques-x-content">
               <TextArea

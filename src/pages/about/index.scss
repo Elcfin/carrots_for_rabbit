@@ -1,0 +1,40 @@
+.about {
+  &-x {
+    padding: 10px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    &-info,
+    &-list {
+      padding: 30px;
+      background-color: var(--semi-color-bg-0);
+      box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 1px;
+    }
+
+    &-info {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    &-list {
+      &-wrapper {
+        padding-top: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+    }
+
+    @media (min-width: 680px) {
+      flex-direction: row;
+      &-info {
+        width: 160px;
+      }
+      &-list {
+        flex: 1;
+      }
+    }
+  }
+}

@@ -11,18 +11,27 @@ import {
   Tooltip,
 } from "@douyinfe/semi-ui";
 import QuestionBar from "../../components/QuestionBar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IconHelpCircle } from "@douyinfe/semi-icons";
 import { useNavigate } from "react-router";
+import { getLatestQuestions } from "../../api/http/getLatesrQuestions";
 
 const useHome = () => {
   const [activeTabKey, setActiveTabKey] = useState("new");
   const [isAsker, setIsAsker] = useState(false);
-  return { activeTabKey, setActiveTabKey, isAsker, setIsAsker };
+  const [quesList, setQuesList] = useState([]);
+  useEffect(() => {
+    getLatestQuestions({ pageSize: 10, num: 1 }).then((data) => {
+      setQuesList(data as any);
+      console.log(data);
+    });
+  }, []);
+  return { activeTabKey, setActiveTabKey, isAsker, setIsAsker, quesList };
 };
 
 const Home = () => {
-  const { activeTabKey, setActiveTabKey, isAsker, setIsAsker } = useHome();
+  const { activeTabKey, setActiveTabKey, isAsker, setIsAsker, quesList } =
+    useHome();
   const navigate = useNavigate();
   return (
     <div className="home">
@@ -67,6 +76,19 @@ const Home = () => {
         <TabPane tab="" itemKey="_" disabled style={{ cursor: "default" }} />
         <TabPane tab="最新" itemKey="new">
           <div className="home-new">
+            {quesList &&
+              quesList.map((ques) => (
+                <QuestionBar
+                  isSolved={(ques as any).hasAdopt}
+                  content={(ques as any).questionContent}
+                  answerCount={(ques as any).answerCount}
+                  title={(ques as any).questionTitle}
+                  tagList={(ques as any).tags ? (ques as any).tags : []}
+                  username={"root"}
+                  timeStamp={(ques as any).latestAnswerTime}
+                  isRecommend={false}
+                />
+              ))}
             <QuestionBar
               isSolved={true}
               content={

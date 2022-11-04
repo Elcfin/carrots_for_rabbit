@@ -8,7 +8,7 @@ import {
   Space,
 } from "@douyinfe/semi-ui";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { useScreen } from "../../hooks/useScreen";
 
 import "./index.scss";
@@ -17,7 +17,19 @@ const MyNav = () => {
   const { isMobile } = useScreen();
   const [content, setContent] = useState("");
   const [isModalShow, setIsModalShow] = useState(false);
+  const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    const key =
+      location.pathname === "/home"
+        ? "home"
+        : location.pathname === "/tags"
+        ? "tags"
+        : "";
+    setSelectedKeys(() => [key]);
+  }, [location]);
 
   useEffect(() => {
     setIsModalShow((isModalShow) => (!isMobile ? false : isModalShow));
@@ -33,9 +45,10 @@ const MyNav = () => {
               { itemKey: "home", text: "问答" },
               { itemKey: "tags", text: "分类" },
             ]}
+            selectedKeys={selectedKeys}
             onSelect={(key) => {
-              console.log(key);
               navigate(`${key.itemKey}`);
+              /* setSelectedKeys(() => [key.itemKey as string]); */
             }}
             header={{
               logo: (
@@ -44,7 +57,11 @@ const MyNav = () => {
                   alt="logo"
                 />
               ),
-              text: isMobile ? "" : "标题",
+              children: (
+                <span style={{ fontFamily: "ZYFangHuaTi", fontSize: 28 }}>
+                  {isMobile ? "" : "小白兔的萝卜基地"}
+                </span>
+              ),
             }}
             footer={
               <>

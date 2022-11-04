@@ -1,0 +1,42 @@
+.about-history-bar {
+  border: solid 1.5px var(--semi-color-border);
+  padding: 10px;
+
+  &-main {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    &-bottom {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      justify-content: space-between;
+
+      &-info {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        &-actions {
+          display: flex;
+          gap: 3px;
+          align-items: center;
+        }
+
+        @media (min-width: 680px) {
+          justify-content: end;
+        }
+      }
+      @media (min-width: 680px) {
+        flex-direction: row;
+      }
+      @media (min-width: 860px) {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 20px;
+      }
+    }
+  }
+}
