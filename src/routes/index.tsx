@@ -13,6 +13,7 @@ import ShowQues from "../pages/showQues";
 export const routesObj: (RouteProps & { protected: boolean })[] = [
   { path: "/home", element: <Home />, protected: false },
   { path: "/about", element: <About />, protected: true },
+  { path: "/about/:username", element: <About />, protected: true },
   { path: "/auth", element: <Auth />, protected: false },
   { path: "/tags", element: <Tags />, protected: false },
   { path: "/tag", element: <Tag />, protected: false },

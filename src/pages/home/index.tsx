@@ -1,38 +1,77 @@
 import "./index.scss";
 
 import {
-  Image,
   Tabs,
   TabPane,
   Button,
   Switch,
-  Divider,
-  Popover,
   Tooltip,
+  Pagination,
 } from "@douyinfe/semi-ui";
 import QuestionBar from "../../components/QuestionBar";
 import { useEffect, useState } from "react";
-import { IconHelpCircle } from "@douyinfe/semi-icons";
 import { useNavigate } from "react-router";
-import { getLatestQuestions } from "../../api/http/getLatesrQuestions";
+import {
+  getLatestQuestions,
+  QuestionListItemType,
+} from "../../api/http/question/getLatestQuestions";
 
 const useHome = () => {
   const [activeTabKey, setActiveTabKey] = useState("new");
   const [isAsker, setIsAsker] = useState(false);
-  const [quesList, setQuesList] = useState([]);
+  const [quesList, setQuesList] = useState<QuestionListItemType[]>([]);
+  const [recommendQuesList, setRecommendQuesList] = useState<any[]>([]);
+  const [totalPage, setTotalPage] = useState<number>(1);
+  const [curPage, setCurPage] = useState<number>(1);
+  const pageSize = 10;
   useEffect(() => {
-    getLatestQuestions({ pageSize: 10, num: 1 }).then((data) => {
-      setQuesList(data as any);
-      console.log(data);
+    getLatestQuestions({ pageSize, num: curPage }).then((resData) => {
+      if (resData) {
+        setQuesList(resData.questions ? resData.questions : []);
+      }
     });
-  }, []);
-  return { activeTabKey, setActiveTabKey, isAsker, setIsAsker, quesList };
+  }, [curPage]);
+  return {
+    activeTabKey,
+    setActiveTabKey,
+    isAsker,
+    setIsAsker,
+    quesList,
+    totalPage,
+    pageSize,
+    setCurPage,
+    curPage,
+    recommendQuesList,
+  };
 };
 
 const Home = () => {
-  const { activeTabKey, setActiveTabKey, isAsker, setIsAsker, quesList } =
-    useHome();
+  const {
+    activeTabKey,
+    setActiveTabKey,
+    isAsker,
+    setIsAsker,
+    quesList,
+    totalPage,
+    pageSize,
+    setCurPage,
+    curPage,
+    recommendQuesList,
+  } = useHome();
   const navigate = useNavigate();
+
+  const MyPagination = () => (
+    <Pagination
+      total={totalPage * pageSize}
+      showTotal
+      style={{ marginBottom: 12 }}
+      currentPage={curPage}
+      onPageChange={(v) => {
+        setCurPage(v);
+      }}
+    />
+  );
+
   return (
     <div className="home">
       <Tabs
@@ -76,84 +115,45 @@ const Home = () => {
         <TabPane tab="" itemKey="_" disabled style={{ cursor: "default" }} />
         <TabPane tab="最新" itemKey="new">
           <div className="home-new">
-            {quesList &&
-              quesList.map((ques) => (
-                <QuestionBar
-                  isSolved={(ques as any).hasAdopt}
-                  content={(ques as any).questionContent}
-                  answerCount={(ques as any).answerCount}
-                  title={(ques as any).questionTitle}
-                  tagList={(ques as any).tags ? (ques as any).tags : []}
-                  username={"root"}
-                  timeStamp={(ques as any).latestAnswerTime}
-                  isRecommend={false}
-                />
-              ))}
-            <QuestionBar
-              isSolved={true}
-              content={
-                "天地玄黄，宇宙洪荒。\n日月盈昃，辰宿列张。寒来暑往，秋收冬藏。\n闰余成岁，律吕调阳。云腾致雨，露结为霜。金生丽水，玉出昆冈。剑号巨阙，珠称夜光。果珍李柰，菜重芥姜。"
-              }
-              answerCount={2}
-              title={"我与父亲不相见已二年余了，我最不能忘记的是他的背影"}
-              tagList={["机器学习", "汇编语言", "编译原理"]}
-              username={"小豆泥爱喝酒"}
-              timeStamp={1666357592926}
-              isRecommend={false}
-            />
-            <QuestionBar
-              isSolved={false}
-              content={
-                "天地玄黄，宇宙洪荒。日月盈昃，辰宿列张。寒来暑往，秋收冬藏。闰余成岁，律吕调阳。云腾致雨，露结为霜。金生丽水，玉出昆冈。剑号巨阙，珠称夜光。果珍李柰，菜重芥姜。"
-              }
-              answerCount={2}
-              title={"龙龙嘿嘿嘿嘿龙宝"}
-              tagList={["机器学习", "汇编语言", "编译原理"]}
-              username={"root"}
-              timeStamp={1666357592926}
-              isRecommend={false}
-            />
-            <QuestionBar
-              isSolved={false}
-              content={
-                "天地玄黄，宇宙洪荒。日月盈昃，辰宿列张。寒来暑往，秋收冬藏。闰余成岁，律吕调阳。云腾致雨，露结为霜。金生丽水，玉出昆冈。剑号巨阙，珠称夜光。果珍李柰，菜重芥姜。"
-              }
-              answerCount={2}
-              title={"在你与我初见的那天晚上，就像是把猫猫堆成塔"}
-              tagList={["机器学习", "汇编语言", "编译原理"]}
-              username={"root"}
-              timeStamp={1666357592926}
-              isRecommend={false}
-            />
-
-            <QuestionBar
-              isSolved={false}
-              content={
-                "天地玄黄，宇宙洪荒。日月盈昃，辰宿列张。寒来暑往，秋收冬藏。闰余成岁，律吕调阳。云腾致雨，露结为霜。金生丽水，玉出昆冈。剑号巨阙，珠称夜光。果珍李柰，菜重芥姜。天地玄黄，宇宙洪荒。日月盈昃，辰宿列张。寒来暑往，秋收冬藏。闰余成岁，律吕调阳。云腾致雨，露结为霜。金生丽水，玉出昆冈。剑号巨阙，珠称夜光。果珍李柰，菜重芥姜。天地玄黄，宇宙洪荒。日月盈昃，辰宿列张。寒来暑往，秋收冬藏。闰余成岁，律吕调阳。云腾致雨，露结为霜。金生丽水，玉出昆冈。剑号巨阙，珠称夜光。果珍李柰，菜重芥姜。天地玄黄，宇宙洪荒。日月盈昃，辰宿列张。寒来暑往，秋收冬藏。闰余成岁，律吕调阳。云腾致雨，露结为霜。金生丽水，玉出昆冈。剑号巨阙，珠称夜光。果珍李柰，菜重芥姜。"
-              }
-              answerCount={2}
-              title={"在你与我初见的那天晚上，就像是把猫猫堆成塔"}
-              tagList={["机器学习", "汇编语言", "编译原理"]}
-              username={"root"}
-              timeStamp={1666357592926}
-              isRecommend={false}
-            />
+            {quesList.length > 0
+              ? quesList.map((ques) => (
+                  <QuestionBar
+                    isSolved={ques.hasAdopt}
+                    content={ques.questionContent}
+                    answerCount={ques.answerCount}
+                    title={ques.questionTitle}
+                    tagList={ques.tags ? ques.tags : []}
+                    username={ques.userName}
+                    timeStamp={ques.latestAnswerTime}
+                    isRecommend={false}
+                  />
+                ))
+              : "暂时空空如也呢......"}
+            {totalPage > 1 ? (
+              <div className="home-new-pagination">
+                <MyPagination />
+              </div>
+            ) : (
+              <></>
+            )}
           </div>
         </TabPane>
         <TabPane tab="为我推送" itemKey="recommend">
           <div className="home-recommend">
-            <QuestionBar
-              isSolved={true}
-              content={
-                "天地玄黄，宇宙洪荒。日月盈昃，辰宿列张。寒来暑往，秋收冬藏。闰余成岁，律吕调阳。云腾致雨，露结为霜。金生丽水，玉出昆冈。剑号巨阙，珠称夜光。果珍李柰，菜重芥姜。"
-              }
-              answerCount={2}
-              title={"在你与我初见的那天晚上，就像是把猫猫堆成塔"}
-              tagList={["机器学习", "汇编语言", "编译原理"]}
-              username={"小豆泥爱喝酒"}
-              timeStamp={1666357592926}
-              isRecommend={true}
-            />
+            {recommendQuesList.length > 0
+              ? recommendQuesList.map((ques) => (
+                  <QuestionBar
+                    isSolved={ques.hasAdopt}
+                    content={ques.questionContent}
+                    answerCount={ques.answerCount}
+                    title={ques.questionTitle}
+                    tagList={ques.tags ? ques.tags : []}
+                    username={ques.userName}
+                    timeStamp={ques.latestAnswerTime}
+                    isRecommend={false}
+                  />
+                ))
+              : "暂时空空如也呢......"}
           </div>
         </TabPane>
       </Tabs>

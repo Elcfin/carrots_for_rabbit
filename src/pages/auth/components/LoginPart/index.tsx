@@ -1,12 +1,33 @@
 import { Button } from "@douyinfe/semi-ui";
 import { Input } from "@douyinfe/semi-ui";
 import { useState } from "react";
+import { useNavigate } from "react-router";
+import { login } from "../../../../api/http/user/login";
+import { AUTH_KEY, TOKEN_KEY } from "../../../../constants/token";
+import { showToast } from "../../../../utils/showToast";
 
 const useLogin = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const handleLoginBtnClick = () => {
-    console.log("Login", username, password);
+  const navigate = useNavigate();
+  const handleLoginBtnClick = async () => {
+    if (username === "") {
+      showToast("用户名不能为空", "info");
+      return;
+    }
+    if (password === "") {
+      showToast("密码不能为空", "info");
+      return;
+    }
+    const res = await login({ userName: username, userPassword: password });
+    if (!res) {
+      showToast("登录失败，请再次尝试", "info");
+      return;
+    }
+    showToast("登录成功", "info");
+    localStorage.setItem(TOKEN_KEY, res.token);
+    localStorage.setItem(AUTH_KEY, res.authority.toString());
+    navigate("/home");
     setUsername("");
     setPassword("");
   };

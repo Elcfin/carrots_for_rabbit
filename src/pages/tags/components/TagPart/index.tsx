@@ -1,5 +1,6 @@
 import "./index.scss";
-import { Card } from "@douyinfe/semi-ui";
+import { Card, Typography } from "@douyinfe/semi-ui";
+import { useScreen } from "../../../../hooks/useScreen";
 
 interface TagPartPropsType {
   title: string;
@@ -8,6 +9,8 @@ interface TagPartPropsType {
 
 const TagPart = (props: TagPartPropsType) => {
   const { title, desc } = props;
+  const { Paragraph } = Typography;
+  const { isMobile } = useScreen();
   return (
     <div className="tag_part">
       <Card
@@ -16,7 +19,12 @@ const TagPart = (props: TagPartPropsType) => {
         headerLine={true}
         title={title}
       >
-        {desc}
+        <Paragraph
+          ellipsis={{ rows: 2 }}
+          style={{ height: isMobile ? "auto" : 40 }}
+        >
+          {desc}
+        </Paragraph>
       </Card>
     </div>
   );

@@ -1,33 +1,27 @@
 import { Button } from "@douyinfe/semi-ui";
 import { Input, Select, Switch, Typography } from "@douyinfe/semi-ui";
-import { GRADELIST, MAJORLIST } from "../../../../constants/info";
-import { useEffect, useState } from "react";
+import {
+  GRADELIST,
+  GradeType,
+  MAJORLIST,
+  MajorType,
+  TAGNAMELIST,
+  TagNameType,
+} from "../../../../constants/info";
+import { useState } from "react";
+import { register, RegisterDataReq } from "../../../../api/http/user/register";
+import { checkUserNameExists } from "../../../../api/http/user/checkUserNameExists";
+import { showToast } from "../../../../utils/showToast";
 
 const useRegister = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [isAsker, setIsAsker] = useState(false);
-  const [tags, setTags] = useState<string[]>([]);
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [selectedGrade, setSelectedGrade] = useState("");
-  const [selectedMajor, setSelectedMajor] = useState("");
-  useEffect(() => {
-    setTags(() => ["汇编语言", "机器学习"]);
-  }, []);
 
-  const handleRegisterBtnClick = () => {
-    console.log(
-      "Register",
-      username,
-      password,
-      email,
-      selectedTags,
-      isAsker,
-      selectedGrade,
-      selectedMajor
-    );
-  };
+  const [selectedTags, setSelectedTags] = useState<TagNameType[]>([]);
+  const [selectedGrade, setSelectedGrade] = useState<GradeType>(GRADELIST[0]);
+  const [selectedMajor, setSelectedMajor] = useState<MajorType>(MAJORLIST[0]);
 
   return {
     username,
@@ -36,7 +30,6 @@ const useRegister = () => {
     setPassword,
     email,
     setEmail,
-    tags,
     isAsker,
     setIsAsker,
     selectedTags,
@@ -45,12 +38,16 @@ const useRegister = () => {
     setSelectedGrade,
     selectedMajor,
     setSelectedMajor,
-    handleRegisterBtnClick,
   };
 };
 
-const RegisterPart = () => {
+interface RegisterPartProps {
+  setActiveKey: React.Dispatch<React.SetStateAction<string>>;
+}
+
+const RegisterPart = (props: RegisterPartProps) => {
   const { Text } = Typography;
+  const { setActiveKey } = props;
   const {
     username,
     setUsername,
@@ -58,22 +55,86 @@ const RegisterPart = () => {
     setPassword,
     email,
     setEmail,
-    tags,
     isAsker,
     setIsAsker,
+    selectedTags,
     setSelectedTags,
+    selectedGrade,
     setSelectedGrade,
+    selectedMajor,
     setSelectedMajor,
-    handleRegisterBtnClick,
   } = useRegister();
+
+  const handleRegisterBtnClick = async () => {
+    if (!username) {
+      showToast("请输入用户名", "info");
+      return;
+    }
+    /* 检测用户名是否存在 */
+    const resData = await checkUserNameExists({
+      userName: username,
+    });
+    if (!resData) return;
+    if (resData.exist) {
+      showToast("用户名已存在", "info");
+      return;
+    }
+    if (username.length > 6) {
+      showToast("用户名至多六个字", "info");
+      return;
+    }
+    if (!password) {
+      showToast("请输入密码", "info");
+      return;
+    }
+    if (!email) {
+      showToast("请输入邮箱", "info");
+      return;
+    }
+
+    const data: RegisterDataReq = {
+      userName: username,
+      userPassword: password,
+      tags: selectedTags,
+      prefer: isAsker,
+      grade: selectedGrade,
+      major: selectedMajor,
+      email,
+    };
+
+    const res = await register(data);
+    if (res) {
+      showToast("注册成功", "info");
+      setActiveKey("login");
+      /* 初始化表单数据 */
+      setUsername("");
+      setPassword("");
+      setEmail("");
+      setIsAsker(false);
+      setSelectedTags([]);
+      setSelectedGrade(GRADELIST[0]);
+      setSelectedMajor(MAJORLIST[0]);
+    }
+  };
 
   return (
     <div className="auth-x-register">
       <Input
         placeholder="用户名"
         value={username}
-        onChange={(v) => {
+        onChange={async (v) => {
           setUsername(v);
+        }}
+        onBlur={async (e) => {
+          if (!e.target.value) return;
+          const resData = await checkUserNameExists({
+            userName: e.target.value,
+          });
+          if (!resData) return;
+          if (resData.exist) {
+            showToast("用户名已存在", "info");
+            return;
+          }
         }}
       />
       <Input
@@ -92,9 +153,9 @@ const RegisterPart = () => {
         }}
       />
       <Select
-        defaultValue={GRADELIST[0]}
+        value={selectedGrade}
         onChange={(v) => {
-          setSelectedGrade(v as string);
+          setSelectedGrade(v as GradeType);
         }}
       >
         {GRADELIST.map((grade) => (
@@ -104,9 +165,9 @@ const RegisterPart = () => {
         ))}
       </Select>
       <Select
-        defaultValue={MAJORLIST[0]}
+        value={selectedMajor}
         onChange={(v) => {
-          setSelectedMajor(v as string);
+          setSelectedMajor(v as MajorType);
         }}
       >
         {MAJORLIST.map((major) => (
@@ -118,11 +179,12 @@ const RegisterPart = () => {
       <Text style={{ margin: "auto" }}>请选择关注的标签（可多选）</Text>
       <Select
         multiple
+        value={selectedTags}
         onChange={(v) => {
-          setSelectedTags(v as string[]);
+          setSelectedTags(v as TagNameType[]);
         }}
       >
-        {tags.map((tag) => (
+        {TAGNAMELIST.map((tag) => (
           <Select.Option key={tag} value={tag}>
             {tag}
           </Select.Option>

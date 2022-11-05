@@ -3,12 +3,22 @@ import { Tabs, TabPane } from "@douyinfe/semi-ui";
 
 import LoginPart from "./components/LoginPart";
 import RegisterPart from "./components/RegisterPart";
+import { useState } from "react";
 
 const Auth = () => {
+  const [activeKey, setActiveKey] = useState("login");
+
   return (
     <div className="auth">
       <div className="auth-x">
-        <Tabs type="line" style={{ width: 360 }}>
+        <Tabs
+          type="line"
+          style={{ width: 360 }}
+          activeKey={activeKey}
+          onTabClick={(v) => {
+            setActiveKey(v);
+          }}
+        >
           <TabPane tab="" itemKey="_" disabled style={{ cursor: "default" }} />
           <TabPane
             tab="登录"
@@ -18,7 +28,7 @@ const Auth = () => {
             <LoginPart />
           </TabPane>
           <TabPane tab="注册" itemKey="register">
-            <RegisterPart />
+            <RegisterPart setActiveKey={setActiveKey} />
           </TabPane>
         </Tabs>
       </div>

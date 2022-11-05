@@ -1,24 +1,31 @@
-import request from "../request";
+import request from "../../request";
 
 interface getLatestQuestionsDataReq {
   pageSize: number;
   num: number;
 }
 
-interface getLatestQuestionsRes {
+export type QuestionListItemType = {
+  questionID: number;
+  userName: string;
   answerCount: number;
   questionTitle: string;
   tags: string[];
   hasAdopt: boolean;
   latestAnswerTime: number;
+  questionTime: number;
   questionContent: string;
-}
+};
+
+type getLatestQuestionsRes = {
+  questions: QuestionListItemType[];
+};
 
 export async function getLatestQuestions(
   data: getLatestQuestionsDataReq
 ): Promise<getLatestQuestionsRes | null> {
   const res = await request<getLatestQuestionsRes>({
-    url: `/getLastQuestions`,
+    url: `/getLatestQuestions`,
     method: "post",
     data,
   });

@@ -1,6 +1,6 @@
 import axios, { AxiosError, AxiosRequestConfig } from "axios";
 
-import { TOKEN_KEY } from "../constants/token";
+import { AUTH_KEY, TOKEN_KEY } from "../constants/token";
 import { showToast } from "../utils/showToast";
 import { SERVER_BASE_URL } from "./config";
 
@@ -13,7 +13,7 @@ type BaseHttpInfo<Data> = {
   /**
    * 错误提示信息, 出现错误时直接使用即可
    */
-  message: string;
+  msg: string;
   data: Data;
 };
 
@@ -65,7 +65,6 @@ export default async function _request<Data>(
     console.log("res", res);
     if (res.status === 200 && res.data && res.data.success) {
       const data = res.data.data;
-      /** 成功一定会 resolve 非空 */
       return data;
     } else if (!res.data) {
       /**
@@ -93,7 +92,8 @@ export default async function _request<Data>(
 
         if (axiosErr.response.status === 401 && !extra?.notAutoRedirect) {
           localStorage.removeItem(TOKEN_KEY);
-          window.location.reload();
+          localStorage.removeItem(AUTH_KEY);
+          window.location.replace("/auth");
         }
       }
     } else if (err instanceof Error) {

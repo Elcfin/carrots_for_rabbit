@@ -1,15 +1,9 @@
-import { IconSearch, IconSearchStroked, IconUser } from "@douyinfe/semi-icons";
-import {
-  Button,
-  Input,
-  InputGroup,
-  Modal,
-  Nav,
-  Space,
-} from "@douyinfe/semi-ui";
+import { IconSearch } from "@douyinfe/semi-icons";
+import { Button, Input, Modal, Nav } from "@douyinfe/semi-ui";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { useScreen } from "../../hooks/useScreen";
+import { getSelf } from "../../utils/getSelf";
 
 import "./index.scss";
 
@@ -20,6 +14,8 @@ const MyNav = () => {
   const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
   const navigate = useNavigate();
   const location = useLocation();
+
+  const { token } = getSelf();
 
   useEffect(() => {
     const key =
@@ -105,13 +101,17 @@ const MyNav = () => {
                 <Button
                   style={{
                     marginRight: 10,
-                    color: "var(--on-bg-l)",
+                    color:
+                      location.pathname === "/about" ||
+                      location.pathname === "/auth"
+                        ? "var(--semi-color-text-0)"
+                        : "var(--semi-color-text-2)",
                   }}
                   onClick={() => {
-                    navigate("auth");
+                    navigate(token ? "about" : "auth");
                   }}
                 >
-                  登录/注册
+                  {token ? "关于我" : "登录/注册"}
                 </Button>
               </>
             }
@@ -141,29 +141,6 @@ const MyNav = () => {
             }}
           />
         </Modal>
-        {/*      {isMobile && (
-          <div className="nav-btn-float">
-            <Button
-              icon={
-                <IconSearch
-                  size="large"
-                  style={{ color: "var(--primary-d)" }}
-                />
-              }
-              style={{
-                backgroundColor: "var(--semi-color-nav-bg)",
-                borderRadius: "50%",
-                height: "45px",
-                width: "45px",
-                boxShadow: "rgba(0, 0, 0, 0.05) 0px 1px 1px",
-              }}
-              theme="light"
-              onClick={() => {
-                navigate("search");
-              }}
-            />
-          </div>
-        )} */}
       </div>
     </>
   );

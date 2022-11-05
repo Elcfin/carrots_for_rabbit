@@ -13,6 +13,10 @@
     flex-direction: column;
     gap: 5px;
 
+    &-pagination {
+      margin: auto;
+    }
+
     @media (min-width: 680px) {
       gap: 10px;
     }
