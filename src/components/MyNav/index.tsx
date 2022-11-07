@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { useScreen } from "../../hooks/useScreen";
 import { getSelf } from "../../utils/getSelf";
+import { showToast } from "../../utils/showToast";
 
 import "./index.scss";
 
@@ -30,6 +31,26 @@ const MyNav = () => {
   useEffect(() => {
     setIsModalShow((isModalShow) => (!isMobile ? false : isModalShow));
   }, [isMobile]);
+
+  const handleSearch = () => {
+    if (!content) {
+      showToast("搜索关键词为空", "info");
+      return;
+    }
+    navigate(`search/${content}`);
+    setContent("");
+  };
+
+  const handleModalSearch = () => {
+    if (!content) {
+      showToast("搜索关键词为空", "info");
+      return;
+    }
+    navigate(`search/${content}`);
+    setContent("");
+    setIsModalShow(false);
+  };
+
   return (
     <>
       <div className="x"></div>
@@ -83,15 +104,13 @@ const MyNav = () => {
                       setContent(v);
                     }}
                     onEnterPress={() => {
-                      navigate("search");
-                      setContent("");
+                      handleSearch();
                     }}
                     suffix={
                       <IconSearch
                         style={{ cursor: "pointer" }}
                         onClick={() => {
-                          navigate("search");
-                          setContent("");
+                          handleSearch();
                         }}
                       />
                     }
@@ -121,13 +140,10 @@ const MyNav = () => {
           visible={isModalShow}
           header={null}
           onOk={() => {
-            navigate("search");
-            setIsModalShow(false);
-            setContent("");
+            handleModalSearch();
           }}
           onCancel={() => {
-            setIsModalShow(false);
-            setContent("");
+            handleModalSearch();
           }}
           okText={"搜索"}
           cancelText={"取消"}

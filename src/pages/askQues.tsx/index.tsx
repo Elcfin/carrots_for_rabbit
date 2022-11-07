@@ -9,15 +9,28 @@ import {
   TextArea,
   Upload,
 } from "@douyinfe/semi-ui";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { IconClose, IconPlus, IconUpload } from "@douyinfe/semi-icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { TAGNAMELIST, TagNameType } from "../../constants/info";
 import { showToast } from "../../utils/showToast";
 import MyCarousel from "../../components/MyCarousel";
+import {
+  insertNewQuestion,
+  InsertNewQuestionDataReq,
+} from "../../api/http/question/insertNewQuestion";
+import { getSelf, removeSelf } from "../../utils/getSelf";
+import { getConciseQuestionByQuestionId } from "../../api/http/question/getConciseQuestionByQuestionId";
+import {
+  updateQuestion,
+  UpdateQuestionDataReq,
+} from "../../api/http/question/updateQuestion";
 
 const AskQues = () => {
   const navigate = useNavigate();
+  const params = useParams();
+  const [isUpdate, setIsUpdate] = useState(false);
+  const [id, setId] = useState(-1);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [selectedTags, setSelectedTags] = useState<TagNameType[]>([]);
@@ -26,6 +39,33 @@ const AskQues = () => {
     "https://lf3-static.bytednsdoc.com/obj/eden-cn/hjeh7pldnulm/SemiDocs/bg-2.png",
     "https://lf3-static.bytednsdoc.com/obj/eden-cn/hjeh7pldnulm/SemiDocs/bg-3.png",
   ]);
+
+  useEffect(() => {
+    const { token } = getSelf();
+    if (!token) {
+      showToast("身份信息失效，请重新登录", "info");
+      removeSelf();
+      return;
+    }
+    if (params.id) {
+      setIsUpdate(true);
+      setId(parseInt(params.id));
+      const data = {
+        token,
+        questionId: parseInt(params.id),
+      };
+      getConciseQuestionByQuestionId(data).then((resData) => {
+        if (resData) {
+          setTitle(resData.title);
+          setContent(resData.content);
+          setSelectedTags(resData.tags ? resData.tags : []);
+          setImgs(resData.questionImages ? resData.questionImages : []);
+        } else {
+          setIsUpdate(false);
+        }
+      });
+    }
+  }, [params]);
 
   const handleAddTagBtnClick = (tagName: TagNameType) => {
     /* if (selectedTags.length >= 3) {
@@ -45,7 +85,56 @@ const AskQues = () => {
     );
   };
 
-  const handlePublish = () => {};
+  const handlePublish = async () => {
+    const { token } = getSelf();
+    if (!token) {
+      showToast("身份信息失效，请重新登录", "info");
+      removeSelf();
+      return;
+    }
+    if (!title) {
+      showToast("标题不能为空", "info");
+      return;
+    }
+    if (selectedTags.length > 3) {
+      showToast("最多添加三个标签", "info");
+      return;
+    }
+    if (!content) {
+      showToast("内容不能为空", "info");
+      return;
+    }
+    if (!isUpdate) {
+      // 如果是发布问题
+      const data: InsertNewQuestionDataReq = {
+        token,
+        title,
+        content,
+        imageURLs: imgs,
+        tags: selectedTags,
+      };
+      const resData = await insertNewQuestion(data);
+      if (resData) {
+        showToast("问题发布成功", "info");
+        navigate("/home");
+      }
+    } else {
+      // 如果是更新问题
+      const data: UpdateQuestionDataReq = {
+        token,
+        questionId: id,
+        title,
+        content,
+        imageURLs: imgs,
+        tags: selectedTags,
+      };
+      const resData = await updateQuestion(data);
+      if (resData) {
+        showToast("问题更新成功", "info");
+        navigate(`/show_ques/${id}`);
+      }
+    }
+  };
 
   return (
     <div className="ask_ques">
@@ -69,10 +158,10 @@ const AskQues = () => {
               <Button
                 theme="solid"
                 onClick={() => {
-                  navigate("/home");
+                  handlePublish();
                 }}
               >
-                发布
+                {isUpdate ? "更新" : "发布"}
               </Button>
             </div>
             <div className="ask_ques-x-tags">

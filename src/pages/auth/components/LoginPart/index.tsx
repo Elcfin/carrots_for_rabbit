@@ -2,8 +2,9 @@ import { Button } from "@douyinfe/semi-ui";
 import { Input } from "@douyinfe/semi-ui";
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import { getMyUserInfo } from "../../../../api/http/user/getMyUserInfo";
 import { login } from "../../../../api/http/user/login";
-import { AUTH_KEY, TOKEN_KEY } from "../../../../constants/token";
+import { AUTH_KEY, TOKEN_KEY, USERNAME_KEY } from "../../../../constants/token";
 import { showToast } from "../../../../utils/showToast";
 
 const useLogin = () => {
@@ -24,12 +25,17 @@ const useLogin = () => {
       showToast("登录失败，请再次尝试", "info");
       return;
     }
-    showToast("登录成功", "info");
-    localStorage.setItem(TOKEN_KEY, res.token);
-    localStorage.setItem(AUTH_KEY, res.authority.toString());
-    navigate("/home");
-    setUsername("");
-    setPassword("");
+    const data = { token: res.token };
+    const resData = await getMyUserInfo(data);
+    if (resData) {
+      showToast("登录成功", "info");
+      localStorage.setItem(TOKEN_KEY, res.token);
+      localStorage.setItem(AUTH_KEY, res.authority.toString());
+      localStorage.setItem(USERNAME_KEY, resData.userName);
+      navigate("/home");
+      setUsername("");
+      setPassword("");
+    }
   };
 
   return { username, setUsername, password, setPassword, handleLoginBtnClick };

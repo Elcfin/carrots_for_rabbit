@@ -17,9 +17,13 @@ export const routesObj: (RouteProps & { protected: boolean })[] = [
   { path: "/auth", element: <Auth />, protected: false },
   { path: "/tags", element: <Tags />, protected: false },
   { path: "/tag", element: <Tag />, protected: false },
+  { path: "/tag/:id", element: <Tag />, protected: false },
   { path: "/search", element: <Search />, protected: false },
+  { path: "/search/:keyword", element: <Search />, protected: false },
   { path: "/ask_ques", element: <AskQues />, protected: true },
+  { path: "/ask_ques/:id", element: <AskQues />, protected: true },
   { path: "/show_ques", element: <ShowQues />, protected: false },
+  { path: "/show_ques/:id", element: <ShowQues />, protected: false },
   {
     path: "/",
     element: <Navigate to={"/home"} />,

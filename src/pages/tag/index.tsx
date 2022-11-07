@@ -1,64 +1,66 @@
 import "./index.scss";
 import { TabPane, Tabs } from "@douyinfe/semi-ui";
 import QuestionBar from "../../components/QuestionBar";
+import { useEffect, useState } from "react";
+import {
+  getQuestionsByTag,
+  QuestionListItemType,
+} from "../../api/http/question/getQuestionsByTag";
+import { useParams } from "react-router";
+import { TagType } from "@douyinfe/semi-ui/lib/es/tag";
+import { TAGNAMELIST, TagNameType } from "../../constants/info";
 
 const Tag = () => {
-  const name = "name";
+  const [id, setId] = useState<number>(-1);
+  const [name, setName] = useState<TagNameType | null>(null);
+  const [quesList, setQuesList] = useState<QuestionListItemType[]>([]);
+  const params = useParams();
+
+  useEffect(() => {
+    if (params.id) {
+      setId(parseInt(params.id));
+    }
+  }, [params]);
+
+  useEffect(() => {
+    if (id) {
+      const data = { tagId: id };
+      getQuestionsByTag(data).then((resData) => {
+        if (resData) {
+          setQuesList(resData.questions ? resData.questions : []);
+          setName(resData.name);
+        }
+      });
+    } else {
+      setQuesList([]);
+    }
+  }, [id]);
+
   return (
     <div className="tag">
       <Tabs type="line">
         <TabPane tab="" itemKey="_" disabled style={{ cursor: "default" }} />
-        <TabPane tab={`标签 ${name}`} itemKey="tag">
+        <TabPane
+          tab={`标签 "${!name || !TAGNAMELIST.includes(name) ? "" : name}"`}
+          itemKey="tag"
+        >
           <div className="tag-x">
-            <QuestionBar
-              isSolved={true}
-              content={
-                "天地玄黄，宇宙洪荒。\n日月盈昃，辰宿列张。寒来暑往，秋收冬藏。\n闰余成岁，律吕调阳。云腾致雨，露结为霜。金生丽水，玉出昆冈。剑号巨阙，珠称夜光。果珍李柰，菜重芥姜。"
-              }
-              answerCount={2}
-              title={"我与父亲不相见已二年余了，我最不能忘记的是他的背影"}
-              tagList={["机器学习", "汇编语言", "编译原理"]}
-              username={"小豆泥爱喝酒"}
-              timeStamp={1666357592926}
-              isRecommend={false}
-            />
-            <QuestionBar
-              isSolved={false}
-              content={
-                "天地玄黄，宇宙洪荒。日月盈昃，辰宿列张。寒来暑往，秋收冬藏。闰余成岁，律吕调阳。云腾致雨，露结为霜。金生丽水，玉出昆冈。剑号巨阙，珠称夜光。果珍李柰，菜重芥姜。"
-              }
-              answerCount={2}
-              title={"龙龙嘿嘿嘿嘿龙宝"}
-              tagList={["机器学习", "汇编语言", "编译原理"]}
-              username={"root"}
-              timeStamp={1666357592926}
-              isRecommend={false}
-            />
-            <QuestionBar
-              isSolved={false}
-              content={
-                "天地玄黄，宇宙洪荒。日月盈昃，辰宿列张。寒来暑往，秋收冬藏。闰余成岁，律吕调阳。云腾致雨，露结为霜。金生丽水，玉出昆冈。剑号巨阙，珠称夜光。果珍李柰，菜重芥姜。"
-              }
-              answerCount={2}
-              title={"在你与我初见的那天晚上，就像是把猫猫堆成塔"}
-              tagList={["机器学习", "汇编语言", "编译原理"]}
-              username={"root"}
-              timeStamp={1666357592926}
-              isRecommend={false}
-            />
-
-            <QuestionBar
-              isSolved={false}
-              content={
-                "天地玄黄，宇宙洪荒。日月盈昃，辰宿列张。寒来暑往，秋收冬藏。闰余成岁，律吕调阳。云腾致雨，露结为霜。金生丽水，玉出昆冈。剑号巨阙，珠称夜光。果珍李柰，菜重芥姜。天地玄黄，宇宙洪荒。日月盈昃，辰宿列张。寒来暑往，秋收冬藏。闰余成岁，律吕调阳。云腾致雨，露结为霜。金生丽水，玉出昆冈。剑号巨阙，珠称夜光。果珍李柰，菜重芥姜。天地玄黄，宇宙洪荒。日月盈昃，辰宿列张。寒来暑往，秋收冬藏。闰余成岁，律吕调阳。云腾致雨，露结为霜。金生丽水，玉出昆冈。剑号巨阙，珠称夜光。果珍李柰，菜重芥姜。天地玄黄，宇宙洪荒。日月盈昃，辰宿列张。寒来暑往，秋收冬藏。闰余成岁，律吕调阳。云腾致雨，露结为霜。金生丽水，玉出昆冈。剑号巨阙，珠称夜光。果珍李柰，菜重芥姜。"
-              }
-              answerCount={2}
-              title={"在你与我初见的那天晚上，就像是把猫猫堆成塔"}
-              tagList={["机器学习", "汇编语言", "编译原理"]}
-              username={"root"}
-              timeStamp={1666357592926}
-              isRecommend={false}
-            />
+            {!name || !TAGNAMELIST.includes(name)
+              ? "该标签不存在"
+              : quesList.length > 0
+              ? quesList.map((ques) => (
+                  <QuestionBar
+                    isSolved={ques.hasAdopt}
+                    content={ques.questionContent}
+                    answerCount={ques.answerCount}
+                    title={ques.questionTitle}
+                    tagList={ques.tags ? ques.tags : []}
+                    username={ques.userName}
+                    timeStamp={ques.latestAnswerTime}
+                    isRecommend={false}
+                  />
+                ))
+              : "暂时空空如也呢......"}
           </div>
         </TabPane>
       </Tabs>
