@@ -20,7 +20,7 @@ import Comment from "../Comment";
 import { getDateString } from "../../../../utils/getDateString";
 import "./index.scss";
 import { showToast } from "../../../../utils/showToast";
-import { getSelf, removeSelf } from "../../../../utils/getSelf";
+import { getIsManager, getSelf, removeSelf } from "../../../../utils/getSelf";
 import {
   insertComment,
   InsertCommentDataReq,
@@ -33,24 +33,43 @@ import {
   unlikeAnswer,
   UnlikeAnswerDataReq,
 } from "../../../../api/http/user/unlikeAnswer";
+import {
+  deleteAnswer,
+  DeleteAnswerDataReq,
+} from "../../../../api/http/answer/deleteAnswer";
+import { useNavigate } from "react-router";
 interface AnswerProps {
   answerId: number;
-  username: string;
+  answerWriter: string;
   avatar: string;
   time: number;
   content: string;
   likesCount: number;
   isAdopted: boolean;
+  setUpdateAnswers: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const Answer = (props: AnswerProps) => {
-  const { avatar, username, time, content, answerId, likesCount } = props;
+  const {
+    avatar,
+    answerWriter,
+    time,
+    content,
+    answerId,
+    likesCount,
+    setUpdateAnswers,
+  } = props;
   const { Text, Paragraph } = Typography;
 
   const [commentList, setCommentList] = useState<CommentItemType[]>([]);
   const [isWrite, setIsWrite] = useState(false);
   const [commentContent, setCommentContent] = useState("");
   const [curLikesCount, setCurLikesCount] = useState(likesCount);
+  const { username } = getSelf();
+  const [isMySelf, setIsMySelf] = useState(answerWriter === username);
+  const [updateComments, setUpdateComments] = useState(false);
+  const isManager = getIsManager();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const data: GetAllCommentOfAnswerDataReq = { answerId };
@@ -59,7 +78,7 @@ const Answer = (props: AnswerProps) => {
         setCommentList(resData.comments ? resData.comments : []);
       }
     });
-  }, [answerId]);
+  }, [answerId, updateComments]);
 
   const handlePublishComment = async () => {
     if (!commentContent) {
@@ -121,7 +140,14 @@ const Answer = (props: AnswerProps) => {
       <div className="answer-info">
         <div className="answer-info-user">
           <Avatar size="small" style={{ margin: 4 }} src={avatar} alt="User" />
-          <Text link>{username}</Text>
+          <Text
+            link
+            onClick={() => {
+              navigate(`/about/${answerWriter}`);
+            }}
+          >
+            {answerWriter}
+          </Text>
         </div>
         <Text style={{ color: "var(--semi-color-text-2)" }}>
           {`回答时间：${getDateString(time)}`}
@@ -160,13 +186,42 @@ const Answer = (props: AnswerProps) => {
             position={"bottom"}
             render={
               <Dropdown.Menu>
-                <Dropdown.Item
-                  onClick={() => {
-                    handleUnlikeBtnClick(answerId);
-                  }}
-                >
-                  不喜欢
-                </Dropdown.Item>
+                {!isMySelf ? (
+                  <Dropdown.Item
+                    onClick={() => {
+                      handleUnlikeBtnClick(answerId);
+                    }}
+                  >
+                    不喜欢
+                  </Dropdown.Item>
+                ) : (
+                  <></>
+                )}
+                {isMySelf || isManager ? (
+                  <Dropdown.Item
+                    onClick={async () => {
+                      const { token } = getSelf();
+                      if (!token) {
+                        showToast("身份信息失效，请重新登录", "info");
+                        removeSelf();
+                        return;
+                      }
+                      const data: DeleteAnswerDataReq = {
+                        token,
+                        answerId,
+                      };
+                      const resData = await deleteAnswer(data);
+                      if (resData) {
+                        showToast("删除成功", "info");
+                        setUpdateAnswers((updateAnswer) => !updateAnswer);
+                      }
+                    }}
+                  >
+                    删除
+                  </Dropdown.Item>
+                ) : (
+                  <></>
+                )}
               </Dropdown.Menu>
             }
           >
@@ -201,7 +256,9 @@ const Answer = (props: AnswerProps) => {
         <div className="answer-comments">
           {commentList.map((comment) => (
             <Comment
-              username={comment.userName}
+              setUpdateComments={setUpdateComments}
+              id={comment.commentId}
+              commentWriter={comment.userName}
               content={comment.content}
               time={comment.createTime}
             />

@@ -57,6 +57,7 @@ const AskQues = () => {
         token,
         questionId: parseInt(params.id),
       };
+      let flag = 0;
       getConciseQuestionByQuestionId(data).then((resData) => {
         if (resData) {
           setTitle(resData.title);
@@ -64,7 +65,8 @@ const AskQues = () => {
           setSelectedTags(resData.tags ? resData.tags : []);
           setImgs(resData.questionImages ? resData.questionImages : []);
         } else {
-          setIsUpdate(false);
+          if (flag) setIsUpdate(false);
+          else flag++;
         }
       });
     }

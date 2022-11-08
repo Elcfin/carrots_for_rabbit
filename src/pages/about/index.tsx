@@ -16,7 +16,7 @@ import {
 } from "@douyinfe/semi-ui";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
-import { uploadFile } from "../../api/http/test";
+
 import QuestionBar from "../../components/QuestionBar";
 import {
   GRADELIST,

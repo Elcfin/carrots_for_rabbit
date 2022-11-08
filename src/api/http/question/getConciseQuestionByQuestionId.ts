@@ -3,6 +3,7 @@ import request from "../../request";
 
 export interface GetConciseQuestionByQuestionIdDataReq {
   questionId: number;
+  token?: string;
 }
 
 export type GetConciseQuestionByQuestionIdRes = {

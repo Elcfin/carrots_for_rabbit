@@ -38,6 +38,12 @@
         align-items: center;
       }
     }
+
+    &-actions {
+      justify-content: flex-end;
+      display: flex;
+      gap: 10px;
+    }
   }
 
   &-write {

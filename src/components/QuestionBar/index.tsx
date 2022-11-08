@@ -3,6 +3,7 @@ import { Typography, Card, Button, Dropdown } from "@douyinfe/semi-ui";
 import { useScreen } from "../../hooks/useScreen";
 import { IconHeartStroked, IconMoreStroked } from "@douyinfe/semi-icons";
 import { useNavigate } from "react-router";
+import { getDateString } from "../../utils/getDateString";
 
 interface QuestionBarPropsType {
   questionId: number;
@@ -90,9 +91,7 @@ const QuestionBar = (props: QuestionBarPropsType) => {
               {!isMobile && (
                 <div className="question-bar-main-bottom-info">
                   <Text style={{ color: "var(--semi-color-text-2)" }}>
-                    {`${date.getFullYear()} 年 ${
-                      date.getMonth() + 1
-                    } 月 ${date.getDay()} 日 `}
+                    {`${getDateString(timeStamp)}`}
                   </Text>
                   <Text
                     link
@@ -115,9 +114,7 @@ const QuestionBar = (props: QuestionBarPropsType) => {
             {isMobile && (
               <div className="question-bar-main-bottom-info">
                 <Text style={{ color: "var(--semi-color-text-2)" }}>
-                  {`${date.getFullYear()} 年 ${
-                    date.getMonth() + 1
-                  } 月 ${date.getDay()} 日 `}
+                  {`${getDateString(timeStamp)}`}
                 </Text>
                 <Text link>{username}</Text>
                 {isRecommend && (
