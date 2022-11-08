@@ -1,9 +1,10 @@
-import { TagType } from "@douyinfe/semi-ui/lib/es/tag";
 import { TagNameType } from "../../../constants/info";
 import request from "../../request";
 
-interface GetQuestionsByTagDataReq {
-  tagId: number;
+export interface GetQuestionsByTagDataReq {
+  tagName: string;
+  pageSize: number;
+  num: number;
 }
 
 export type QuestionListItemType = {
@@ -19,7 +20,7 @@ export type QuestionListItemType = {
 };
 
 type GetQuestionsByTagRes = {
-  name: TagNameType;
+  pageSum: number;
   questions: QuestionListItemType[];
 };
 

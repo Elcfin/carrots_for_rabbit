@@ -108,12 +108,12 @@ export const TAGINFOLIST: TagInfoItemType[] = [
 ];
 
 export type AvatarUrlType =
-  | "http://img.elcfin.cn/image/avatar/avatar0.jpg"
-  | "http://img.elcfin.cn/image/avatar/avatar1.jpg"
-  | "http://img.elcfin.cn/image/avatar/avatar2.jpg";
+  | "https://img.elcfin.cn/image/avatar/avatar0.jpg"
+  | "https://img.elcfin.cn/image/avatar/avatar1.jpg"
+  | "https://img.elcfin.cn/image/avatar/avatar2.jpg";
 
 export const AVATARURLLIST: AvatarUrlType[] = [
-  "http://img.elcfin.cn/image/avatar/avatar0.jpg",
-  "http://img.elcfin.cn/image/avatar/avatar1.jpg",
-  "http://img.elcfin.cn/image/avatar/avatar2.jpg",
+  "https://img.elcfin.cn/image/avatar/avatar0.jpg",
+  "https://img.elcfin.cn/image/avatar/avatar1.jpg",
+  "https://img.elcfin.cn/image/avatar/avatar2.jpg",
 ];

@@ -1,4 +1,3 @@
-import { getMyUserInfo } from "../api/http/user/getMyUserInfo";
 import { AUTH_KEY, TOKEN_KEY, USERNAME_KEY } from "../constants/token";
 
 export const getSelf = () => {
@@ -13,4 +12,14 @@ export const removeSelf = () => {
   localStorage.removeItem(AUTH_KEY);
   localStorage.removeItem(USERNAME_KEY);
   window.location.replace("/auth");
+};
+
+export const getIsLogin = () => {
+  const { token, username, auth } = getSelf();
+  return token && username && (auth === 0 || auth === 1);
+};
+
+export const getIsManager = () => {
+  const { token, username, auth } = getSelf();
+  return token && username && auth === 1;
 };

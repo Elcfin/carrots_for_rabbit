@@ -43,6 +43,7 @@ const Search = () => {
               : quesList.length > 0
               ? quesList.map((ques) => (
                   <QuestionBar
+                    questionId={ques.questionID}
                     isSolved={ques.hasAdopt}
                     content={ques.questionContent}
                     answerCount={ques.answerCount}

@@ -28,6 +28,7 @@ const useHome = () => {
     getLatestQuestions({ pageSize, num: curPage }).then((resData) => {
       if (resData) {
         setQuesList(resData.questions ? resData.questions : []);
+        setTotalPage(resData.pageSum);
       }
     });
   }, [curPage]);
@@ -63,7 +64,7 @@ const Home = () => {
   const MyPagination = () => (
     <Pagination
       total={totalPage * pageSize}
-      showTotal
+      /* showTotal */
       style={{ marginBottom: 12 }}
       currentPage={curPage}
       onPageChange={(v) => {
@@ -118,6 +119,7 @@ const Home = () => {
             {quesList.length > 0
               ? quesList.map((ques) => (
                   <QuestionBar
+                    questionId={ques.questionID}
                     isSolved={ques.hasAdopt}
                     content={ques.questionContent}
                     answerCount={ques.answerCount}
@@ -147,6 +149,7 @@ const Home = () => {
             {recommendQuesList.length > 0
               ? recommendQuesList.map((ques) => (
                   <QuestionBar
+                    questionId={ques.questionID}
                     isSolved={ques.hasAdopt}
                     content={ques.questionContent}
                     answerCount={ques.answerCount}

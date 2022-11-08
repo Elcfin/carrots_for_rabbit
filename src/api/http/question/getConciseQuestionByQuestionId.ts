@@ -2,7 +2,6 @@ import { AvatarUrlType, TagNameType } from "../../../constants/info";
 import request from "../../request";
 
 export interface GetConciseQuestionByQuestionIdDataReq {
-  token: string;
   questionId: number;
 }
 

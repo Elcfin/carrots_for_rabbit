@@ -19,6 +19,7 @@ export type QuestionListItemType = {
 
 type getLatestQuestionsRes = {
   questions: QuestionListItemType[];
+  pageSum: number;
 };
 
 export async function getLatestQuestions(

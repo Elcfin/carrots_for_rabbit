@@ -1,40 +1,66 @@
 import "./index.scss";
-import { TabPane, Tabs } from "@douyinfe/semi-ui";
+import { Pagination, TabPane, Tabs } from "@douyinfe/semi-ui";
 import QuestionBar from "../../components/QuestionBar";
 import { useEffect, useState } from "react";
 import {
   getQuestionsByTag,
+  GetQuestionsByTagDataReq,
   QuestionListItemType,
 } from "../../api/http/question/getQuestionsByTag";
-import { useParams } from "react-router";
-import { TagType } from "@douyinfe/semi-ui/lib/es/tag";
+import { useNavigate, useParams } from "react-router";
 import { TAGNAMELIST, TagNameType } from "../../constants/info";
+import { showToast } from "../../utils/showToast";
 
 const Tag = () => {
-  const [id, setId] = useState<number>(-1);
   const [name, setName] = useState<TagNameType | null>(null);
   const [quesList, setQuesList] = useState<QuestionListItemType[]>([]);
   const params = useParams();
+  const navigate = useNavigate();
+
+  const [totalPage, setTotalPage] = useState<number>(1);
+  const [curPage, setCurPage] = useState<number>(1);
+  const pageSize = 10;
 
   useEffect(() => {
-    if (params.id) {
-      setId(parseInt(params.id));
+    if (params.name) {
+      if (TAGNAMELIST.find((tagName) => tagName === params.name))
+        setName(params.name as TagNameType);
+      else {
+        showToast("该标签不存在", "info");
+        navigate(`/tags`);
+      }
     }
   }, [params]);
 
   useEffect(() => {
-    if (id) {
-      const data = { tagId: id };
+    if (name) {
+      const data: GetQuestionsByTagDataReq = {
+        tagName: name,
+        pageSize,
+        num: curPage,
+      };
       getQuestionsByTag(data).then((resData) => {
         if (resData) {
           setQuesList(resData.questions ? resData.questions : []);
-          setName(resData.name);
+          setTotalPage(resData.pageSum);
         }
       });
     } else {
       setQuesList([]);
     }
-  }, [id]);
+  }, [name, curPage]);
+
+  const MyPagination = () => (
+    <Pagination
+      total={totalPage * pageSize}
+      /* showTotal */
+      style={{ marginBottom: 12 }}
+      currentPage={curPage}
+      onPageChange={(v) => {
+        setCurPage(v);
+      }}
+    />
+  );
 
   return (
     <div className="tag">
@@ -50,6 +76,7 @@ const Tag = () => {
               : quesList.length > 0
               ? quesList.map((ques) => (
                   <QuestionBar
+                    questionId={ques.questionID}
                     isSolved={ques.hasAdopt}
                     content={ques.questionContent}
                     answerCount={ques.answerCount}
@@ -61,6 +88,13 @@ const Tag = () => {
                   />
                 ))
               : "暂时空空如也呢......"}
+            {totalPage > 1 ? (
+              <div className="home-new-pagination">
+                <MyPagination />
+              </div>
+            ) : (
+              <></>
+            )}
           </div>
         </TabPane>
       </Tabs>

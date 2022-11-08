@@ -2,12 +2,14 @@ import "./index.scss";
 import {
   Button,
   Dropdown,
+  ImagePreview,
   Input,
   SplitButtonGroup,
   TabPane,
   Tabs,
   TextArea,
   Upload,
+  Image,
 } from "@douyinfe/semi-ui";
 import { useNavigate, useParams } from "react-router";
 import { IconClose, IconPlus, IconUpload } from "@douyinfe/semi-icons";
@@ -25,6 +27,7 @@ import {
   updateQuestion,
   UpdateQuestionDataReq,
 } from "../../api/http/question/updateQuestion";
+import { uploadImage } from "../../api/http/img/uploadImage";
 
 const AskQues = () => {
   const navigate = useNavigate();
@@ -34,11 +37,11 @@ const AskQues = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [selectedTags, setSelectedTags] = useState<TagNameType[]>([]);
-  const [imgs, setImgs] = useState<string[]>([
-    "https://lf3-static.bytednsdoc.com/obj/eden-cn/hjeh7pldnulm/SemiDocs/bg-1.png",
-    "https://lf3-static.bytednsdoc.com/obj/eden-cn/hjeh7pldnulm/SemiDocs/bg-2.png",
-    "https://lf3-static.bytednsdoc.com/obj/eden-cn/hjeh7pldnulm/SemiDocs/bg-3.png",
-  ]);
+  const [imgs, setImgs] = useState<string[]>([]);
+
+  useEffect(() => {
+    console.log("imgs", imgs);
+  }, [imgs]);
 
   useEffect(() => {
     const { token } = getSelf();
@@ -230,10 +233,21 @@ const AskQues = () => {
                 <Upload
                   fileList={[]}
                   accept={"image/*"}
-                  onChange={(e) => {
+                  onChange={async (e) => {
                     // 获取到的当前文件实例，可以用于发送请求获得图片链接
                     const file = e.currentFile.fileInstance;
-                    console.log(file);
+                    if (file) {
+                      const data = file;
+                      const resData = await uploadImage(data);
+
+                      if (resData) {
+                        setImgs((imgs) => [...imgs, resData]);
+                      }
+                    }
+                  }}
+                  beforeClear={(v) => {
+                    console.log(v);
+                    return true;
                   }}
                 >
                   <Button icon={<IconUpload />} theme="light">
@@ -241,9 +255,16 @@ const AskQues = () => {
                   </Button>
                 </Upload>
               </div>
-              {imgs.length > 0 ? (
+              {imgs.length > 0 && imgs.length % 2 ? (
                 <div className="ask_ques-x-imgs-list">
-                  <MyCarousel imgList={imgs} />
+                  <MyCarousel imgList={imgs} setImgList={setImgs} />
+                </div>
+              ) : (
+                <></>
+              )}
+              {imgs.length > 0 && !(imgs.length % 2) ? (
+                <div className="ask_ques-x-imgs-list">
+                  <MyCarousel imgList={imgs} setImgList={setImgs} />
                 </div>
               ) : (
                 <></>

@@ -3,7 +3,7 @@ import { Button, Input, Modal, Nav } from "@douyinfe/semi-ui";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { useScreen } from "../../hooks/useScreen";
-import { getSelf } from "../../utils/getSelf";
+import { getIsLogin } from "../../utils/getSelf";
 import { showToast } from "../../utils/showToast";
 
 import "./index.scss";
@@ -15,8 +15,7 @@ const MyNav = () => {
   const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
   const navigate = useNavigate();
   const location = useLocation();
-
-  const { token } = getSelf();
+  const isLogin = getIsLogin();
 
   useEffect(() => {
     const key =
@@ -127,10 +126,10 @@ const MyNav = () => {
                         : "var(--semi-color-text-2)",
                   }}
                   onClick={() => {
-                    navigate(token ? "about" : "auth");
+                    navigate(isLogin ? "about" : "auth");
                   }}
                 >
-                  {token ? "关于我" : "登录/注册"}
+                  {isLogin ? "关于我" : "登录/注册"}
                 </Button>
               </>
             }

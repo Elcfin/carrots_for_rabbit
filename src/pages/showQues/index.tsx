@@ -1,25 +1,15 @@
 import "./index.scss";
 import {
   Button,
-  Input,
-  SplitButtonGroup,
   TabPane,
   Tabs,
-  TagGroup,
   TextArea,
-  Upload,
   Typography,
   Avatar,
   Divider,
 } from "@douyinfe/semi-ui";
 import { useNavigate, useParams } from "react-router";
-import {
-  IconClose,
-  IconCrossCircleStroked,
-  IconCrossStroked,
-  IconEyeOpened,
-  IconPlus,
-} from "@douyinfe/semi-icons";
+
 import { useEffect, useState } from "react";
 import MyCarousel from "../../components/MyCarousel";
 import { useScreen } from "../../hooks/useScreen";
@@ -29,14 +19,12 @@ import {
   getConciseQuestionByQuestionId,
   GetConciseQuestionByQuestionIdRes,
 } from "../../api/http/question/getConciseQuestionByQuestionId";
-import { TagNameType } from "../../constants/info";
 import { getDateString } from "../../utils/getDateString";
 import Answer from "./components/Answer";
 import {
   AnswerItemType,
   getAllAnswerOfQuestion,
   GetAllAnswerOfQuestionDataReq,
-  GetAllAnswerOfQuestionDataRes,
 } from "../../api/http/answer/getAllAnswerOfQuestion";
 import {
   insertAnswer,
@@ -50,7 +38,6 @@ const ShowQues = () => {
   const [hasIAnswered, setHasIAnswered] = useState(true);
   const [id, setId] = useState(-1);
   const [answerContent, setAnswerContent] = useState("");
-
   const [quesInfo, setQuesInfo] = useState<GetConciseQuestionByQuestionIdRes>();
   const [ansList, setAnsList] = useState<AnswerItemType[]>([]);
 
@@ -60,22 +47,23 @@ const ShowQues = () => {
       navigate("/home");
       return;
     }
-    const { token, username } = getSelf();
+    /* const { token, username } = getSelf();
     if (!token || !username) {
       showToast("身份信息失效，请重新登录", "info");
       removeSelf();
       return;
-    }
+    } */
+
     if (params.id) {
       const pId = parseInt(params.id);
       setId(pId);
       const data = {
-        token,
         questionId: pId,
       };
       getConciseQuestionByQuestionId(data).then((resData) => {
         if (resData) {
-          setIsMySelf(resData.userName === username);
+          const { username } = getSelf();
+          if (username) setIsMySelf(resData.userName === username);
           setQuesInfo(resData);
           const newData: GetAllAnswerOfQuestionDataReq = {
             questionId: pId,

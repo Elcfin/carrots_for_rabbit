@@ -1,6 +1,9 @@
 .my_carousel {
   .semi-carousel-indicator-dot .semi-carousel-indicator-item-small {
-    width: 6px;
-    height: 6px;
+    width: 0px;
+    height: 0px;
+  }
+
+  &-btn {
   }
 }

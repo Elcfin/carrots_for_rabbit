@@ -1,10 +1,11 @@
 import "./index.scss";
-import { Typography, Card, Tag, Button, Dropdown } from "@douyinfe/semi-ui";
-import { TagProps } from "@douyinfe/semi-ui/lib/es/tag";
+import { Typography, Card, Button, Dropdown } from "@douyinfe/semi-ui";
 import { useScreen } from "../../hooks/useScreen";
 import { IconHeartStroked, IconMoreStroked } from "@douyinfe/semi-icons";
+import { useNavigate } from "react-router";
 
 interface QuestionBarPropsType {
+  questionId: number;
   answerCount: number;
   title: string;
   tagList: string[];
@@ -26,10 +27,11 @@ const QuestionBar = (props: QuestionBarPropsType) => {
     content,
     isSolved,
     isRecommend,
+    questionId,
   } = props;
   const { isMobile } = useScreen();
+  const navigate = useNavigate();
   const date = new Date(timeStamp);
-  const curDate = new Date();
 
   return (
     <Card
@@ -38,13 +40,20 @@ const QuestionBar = (props: QuestionBarPropsType) => {
         backgroundColor: "var(--semi-color-bg-0)",
         border: 0,
         borderRadius: 0,
-        /* boxShadow: "rgba(0, 0, 0, 0.05) 0px 1px 3px", */
       }}
     >
       <div className="question-bar">
         <div className="question-bar-main">
           <div className="question-bar-main-title">
-            <Title heading={6}>{title}</Title>
+            <Title
+              heading={6}
+              style={{ cursor: "pointer" }}
+              onClick={() => {
+                navigate(`/show_ques/${questionId}`);
+              }}
+            >
+              {title}
+            </Title>
           </div>
 
           <div className="question-bar-main-content">
@@ -70,6 +79,9 @@ const QuestionBar = (props: QuestionBarPropsType) => {
                     size="small"
                     theme="light"
                     style={{ color: "var(--semi-color-text-2)" }}
+                    onClick={() => {
+                      navigate(`/tag/${tag}`);
+                    }}
                   >
                     {tag}
                   </Button>
@@ -82,7 +94,14 @@ const QuestionBar = (props: QuestionBarPropsType) => {
                       date.getMonth() + 1
                     } 月 ${date.getDay()} 日 `}
                   </Text>
-                  <Text link>{username}</Text>
+                  <Text
+                    link
+                    onClick={() => {
+                      navigate(`/about/${username}`);
+                    }}
+                  >
+                    {username}
+                  </Text>
                   {isRecommend && (
                     <div className="question-bar-main-bottom-info-actions">
                       <Button size="small" icon={<IconHeartStroked />} />
