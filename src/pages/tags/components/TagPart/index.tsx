@@ -1,6 +1,7 @@
 import "./index.scss";
 import { Card, Typography } from "@douyinfe/semi-ui";
 import { useScreen } from "../../../../hooks/useScreen";
+import { useNavigate } from "react-router";
 
 interface TagPartPropsType {
   title: string;
@@ -9,8 +10,9 @@ interface TagPartPropsType {
 
 const TagPart = (props: TagPartPropsType) => {
   const { title, desc } = props;
-  const { Paragraph } = Typography;
+  const { Paragraph, Title } = Typography;
   const { isMobile } = useScreen();
+  const navigate = useNavigate();
   return (
     <div className="tag_part">
       <Card
@@ -18,6 +20,17 @@ const TagPart = (props: TagPartPropsType) => {
         bordered={false}
         headerLine={true}
         title={title}
+        header={
+          <Title
+            heading={6}
+            onClick={() => {
+              navigate(`/tag/${title}`);
+            }}
+            style={{ cursor: "pointer" }}
+          >
+            {title}
+          </Title>
+        }
       >
         <Paragraph
           ellipsis={{ rows: 2 }}

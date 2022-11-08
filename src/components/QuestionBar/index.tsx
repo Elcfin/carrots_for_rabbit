@@ -70,7 +70,7 @@ const QuestionBar = (props: QuestionBarPropsType) => {
                 size="small"
                 disabled
                 style={{ color: "var(--semi-color-carrot)", cursor: "default" }}
-              >{`回答数 ${answerCount} ${isSolved ? "| 已解决" : ""}`}</Button>
+              >{`回答数 ${answerCount} ${isSolved ? "- 已解决" : ""}`}</Button>
             </div>
             <div className="question-bar-main-bottom-right">
               <div className="question-bar-main-bottom-tags">

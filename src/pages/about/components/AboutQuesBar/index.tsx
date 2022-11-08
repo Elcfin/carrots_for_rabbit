@@ -1,20 +1,20 @@
 import "./index.scss";
 import { Typography, Card, Button } from "@douyinfe/semi-ui";
-import { useScreen } from "../../../../hooks/useScreen";
 import { getDateString } from "../../../../utils/getDateString";
+import { useNavigate } from "react-router";
 
 interface AboutQuesBarPropsType {
   title: string;
   timeStamp: number;
   isSolved: boolean;
   ansCount: number;
+  id: number;
 }
 
 const AboutQuesBar = (props: AboutQuesBarPropsType) => {
   const { Title, Text } = Typography;
-  const { title, timeStamp, isSolved, ansCount } = props;
-  const { isMobile } = useScreen();
-  const date = new Date(timeStamp);
+  const { title, timeStamp, isSolved, ansCount, id } = props;
+  const navigate = useNavigate();
 
   return (
     <Card
@@ -28,7 +28,15 @@ const AboutQuesBar = (props: AboutQuesBarPropsType) => {
       <div className="about-ques-bar">
         <div className="about-ques-bar-main">
           <div className="about-ques-bar-main-title">
-            <Title heading={6}>{title}</Title>
+            <Title
+              heading={6}
+              style={{ cursor: "pointer" }}
+              onClick={() => {
+                navigate(`/show_ques/${id}`);
+              }}
+            >
+              {title}
+            </Title>
           </div>
 
           <div className="about-ques-bar-main-bottom">

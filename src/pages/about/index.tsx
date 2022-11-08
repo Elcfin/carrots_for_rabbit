@@ -317,6 +317,19 @@ const About = () => {
                 ) : (
                   <></>
                 )}
+                {isMySelf ? (
+                  <Button
+                    theme="light"
+                    style={{ transitionDuration: ".3s" }}
+                    onClick={() => {
+                      removeSelf();
+                    }}
+                  >
+                    退出登录
+                  </Button>
+                ) : (
+                  <></>
+                )}
 
                 <Modal
                   visible={isModalShow}
@@ -528,6 +541,7 @@ const About = () => {
                     {userQuesList.length > 0
                       ? userQuesList.map((userQues) => (
                           <AboutQuesBar
+                            id={userQues.questionId}
                             key={userQues.questionId}
                             title={userQues.questionTitle}
                             timeStamp={userQues.createTime}
@@ -553,6 +567,7 @@ const About = () => {
                       ? userAnsList.map((userAns) => {
                           return (
                             <AboutAnsBar
+                              id={userAns.questionId}
                               key={userAns.questionId + userAns.answerTime}
                               title={userAns.questionTitle}
                               timeStamp={userAns.answerTime}
@@ -587,6 +602,7 @@ const About = () => {
                             ),
                           ].map((userView) => (
                             <AboutHistoryBar
+                              id={userView.question.questionID}
                               key={userView.question.questionID}
                               title={userView.question.questionTitle}
                               timeStamp={userView.viewTime}

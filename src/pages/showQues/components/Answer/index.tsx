@@ -1,5 +1,15 @@
-import { IconDislikeThumb, IconLikeThumb } from "@douyinfe/semi-icons";
-import { Avatar, Button, TextArea, Typography } from "@douyinfe/semi-ui";
+import {
+  IconDislikeThumb,
+  IconLikeThumb,
+  IconMoreStroked,
+} from "@douyinfe/semi-icons";
+import {
+  Avatar,
+  Button,
+  Dropdown,
+  TextArea,
+  Typography,
+} from "@douyinfe/semi-ui";
 import { useEffect, useState } from "react";
 import {
   CommentItemType,
@@ -15,6 +25,14 @@ import {
   insertComment,
   InsertCommentDataReq,
 } from "../../../../api/http/comment/insertComment";
+import {
+  likeAnswer,
+  likeAnswerDataReq,
+} from "../../../../api/http/user/likeAnswer";
+import {
+  unlikeAnswer,
+  UnlikeAnswerDataReq,
+} from "../../../../api/http/user/unlikeAnswer";
 interface AnswerProps {
   answerId: number;
   username: string;
@@ -26,12 +44,13 @@ interface AnswerProps {
 }
 
 const Answer = (props: AnswerProps) => {
-  const { avatar, username, time, content, answerId } = props;
+  const { avatar, username, time, content, answerId, likesCount } = props;
   const { Text, Paragraph } = Typography;
 
   const [commentList, setCommentList] = useState<CommentItemType[]>([]);
   const [isWrite, setIsWrite] = useState(false);
   const [commentContent, setCommentContent] = useState("");
+  const [curLikesCount, setCurLikesCount] = useState(likesCount);
 
   useEffect(() => {
     const data: GetAllCommentOfAnswerDataReq = { answerId };
@@ -71,6 +90,32 @@ const Answer = (props: AnswerProps) => {
     }
   };
 
+  const handleLikeBtnClick = async (answerId: number) => {
+    const { token } = getSelf();
+    if (!token) {
+      showToast("需要先登录才可以对回答点赞", "info");
+      return;
+    }
+    const data: likeAnswerDataReq = { token, like: true, answerId };
+    const resData = await likeAnswer(data);
+    if (resData) {
+      showToast("点赞成功", "info");
+      setCurLikesCount((curLikesCount) => curLikesCount + 1);
+    }
+  };
+  const handleUnlikeBtnClick = async (answerId: number) => {
+    const { token } = getSelf();
+    if (!token) {
+      showToast("需要先登录才可以对回答表示不喜欢", "info");
+      return;
+    }
+    const data: UnlikeAnswerDataReq = { token, unlike: true, answerId };
+    const resData = await unlikeAnswer(data);
+    if (resData) {
+      showToast("收到反馈", "info");
+    }
+  };
+
   return (
     <div className="answer">
       <div className="answer-info">
@@ -100,15 +145,33 @@ const Answer = (props: AnswerProps) => {
         </div>
         <div className="answer-bottom-actions">
           <Button
+            onClick={() => {
+              handleLikeBtnClick(answerId);
+            }}
+            size="small"
             icon={
               <IconLikeThumb style={{ color: "var(--semi-color-text-2)" }} />
             }
-          />
-          <Button
-            icon={
-              <IconDislikeThumb style={{ color: "var(--semi-color-text-2)" }} />
+          >
+            {curLikesCount}
+          </Button>
+          <Dropdown
+            trigger={"hover"}
+            position={"bottom"}
+            render={
+              <Dropdown.Menu>
+                <Dropdown.Item
+                  onClick={() => {
+                    handleUnlikeBtnClick(answerId);
+                  }}
+                >
+                  不喜欢
+                </Dropdown.Item>
+              </Dropdown.Menu>
             }
-          />
+          >
+            <Button size="small" icon={<IconMoreStroked />} />
+          </Dropdown>
         </div>
       </div>
       {isWrite ? (

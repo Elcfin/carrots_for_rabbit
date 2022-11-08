@@ -1,8 +1,11 @@
 import "./index.scss";
 import { Typography, Card, Button } from "@douyinfe/semi-ui";
 import { useScreen } from "../../../../hooks/useScreen";
+import { getDateString } from "../../../../utils/getDateString";
+import { useNavigate } from "react-router";
 
 interface AboutHistoryBarPropsType {
+  id: number;
   title: string;
   timeStamp: number;
   isSolved: boolean;
@@ -11,9 +14,8 @@ interface AboutHistoryBarPropsType {
 
 const AboutHistoryBar = (props: AboutHistoryBarPropsType) => {
   const { Title, Text } = Typography;
-  const { title, timeStamp, isSolved, ansCount } = props;
-  const { isMobile } = useScreen();
-  const date = new Date(timeStamp);
+  const { title, timeStamp, isSolved, ansCount, id } = props;
+  const navigate = useNavigate();
 
   return (
     <Card
@@ -27,7 +29,15 @@ const AboutHistoryBar = (props: AboutHistoryBarPropsType) => {
       <div className="about-history-bar">
         <div className="about-history-bar-main">
           <div className="about-history-bar-main-title">
-            <Title heading={6}>{title}</Title>
+            <Title
+              heading={6}
+              style={{ cursor: "pointer" }}
+              onClick={() => {
+                navigate(`/show_ques/${id}`);
+              }}
+            >
+              {title}
+            </Title>
           </div>
 
           <div className="about-history-bar-main-bottom">
@@ -46,9 +56,7 @@ const AboutHistoryBar = (props: AboutHistoryBarPropsType) => {
 
             <div className="about-history-bar-main-bottom-info">
               <Text style={{ color: "var(--semi-color-text-2)" }}>
-                {`浏览时间：${date.getFullYear()} 年 ${
-                  date.getMonth() + 1
-                } 月 ${date.getDay()} 日 `}
+                {`浏览时间：${getDateString(timeStamp)}`}
               </Text>
             </div>
           </div>
