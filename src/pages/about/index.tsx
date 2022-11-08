@@ -12,6 +12,7 @@ import {
   TextArea,
   AvatarGroup,
   Skeleton,
+  Pagination,
 } from "@douyinfe/semi-ui";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
@@ -33,7 +34,7 @@ import {
   GetMyUserInfoDataRes,
   getMyUserInfo,
 } from "../../api/http/user/getMyUserInfo";
-import { getSelf, removeSelf } from "../../utils/getSelf";
+import { getIsLogin, getSelf, removeSelf } from "../../utils/getSelf";
 import { showToast } from "../../utils/showToast";
 import {
   updateMyUserInfo,
@@ -46,8 +47,6 @@ import {
 import { getOtherUserInfo } from "../../api/http/user/getOtherUserInfo";
 import {
   getMyQuestions,
-  GetMyQuestionsDataReq,
-  GetMyQuestionsDataRes,
   UserQuestionItemType,
 } from "../../api/http/question/getMyQuestions";
 import {
@@ -81,85 +80,165 @@ const About = () => {
   const navigate = useNavigate();
   const params = useParams();
 
-  useEffect(() => {
-    const { token } = getSelf();
+  const [quesCurPage, setQuesCurPage] = useState(1);
+  const [ansCurPage, setAnsCurPage] = useState(1);
+  const [viewCurPage, setViewCurPage] = useState(1);
 
-    if (!token) {
+  const pageSize = 5;
+
+  const [quesTotalPage, setQuesTotalPage] = useState(0);
+  const [ansTotalPage, setAnsTotalPage] = useState(0);
+  const [viewTotalPage, setViewTotalPage] = useState(0);
+
+  // 访问的界面的用户名称
+  const [showUserName, setShowUserName] = useState("");
+
+  const MyPagination = (props: {
+    totalPage: number;
+    curPage: number;
+    setCurPage: React.Dispatch<React.SetStateAction<number>>;
+  }) => {
+    return (
+      <Pagination
+        total={props.totalPage * pageSize}
+        style={{ margin: "auto", marginBottom: 12 }}
+        size="small"
+        pageSize={pageSize}
+        currentPage={props.curPage}
+        onPageChange={(v) => {
+          props.setCurPage(v);
+        }}
+      />
+    );
+  };
+  useEffect(() => {
+    console.log(userAnsList);
+  }, [userAnsList]);
+
+  useEffect(() => {
+    if (params.username) {
+      setShowUserName(params.username);
+    }
+  }, [params]);
+
+  useEffect(() => {
+    // 获取用户个人信息
+    const isLogin = getIsLogin();
+    const { token, username } = getSelf();
+
+    if (!isLogin || !token || !username) {
+      // 为了防止下面使用 token 时报错
+      // 用 (!isLogin) 其实就可以
+      showToast("需要先登录才能查看用户信息", "info");
       removeSelf();
       return;
     }
-    const data = { token };
-    getMyUserInfo(data).then((resData) => {
-      if (resData) {
-        if (params.username && params.username !== resData.userName) {
-          // 他人信息主页
-          const data = { token, userName: params.username };
-          getOtherUserInfo(data).then((innerResData) => {
-            if (innerResData) {
-              setUserInfo(innerResData);
-              setLoading(false);
 
-              // 请求帖子列表部分的信息
-              // 用户的提问
-              getMyQuestions(data).then((quesResData) => {
-                if (quesResData) {
-                  setUserQuesList(
-                    quesResData.questions ? quesResData.questions : []
-                  );
-                }
-              });
+    if (params.username && params.username !== username) {
+      const newData = { token, userName: params.username };
+      // 浏览器实际会发送两次请求，所以第一次必然返回 null，用 flag 标记一下便于错误处理
+      let flag = 0;
 
-              // 用户的回答
-              getMyAnswers(data).then((ansResData) => {
-                if (ansResData) {
-                  setUserAnsList(ansResData.answers ? ansResData.answers : []);
-                }
-              });
-            } else {
-              showToast("该用户不存在", "info");
-              navigate("/about");
-            }
-          });
+      getOtherUserInfo(newData).then((otherResData) => {
+        if (otherResData) {
+          setUserInfo(otherResData);
+          setLoading(false);
         } else {
+          if (flag) {
+            showToast("该用户不存在", "info");
+            navigate("/about");
+          }
+          flag++;
+        }
+      });
+    } else {
+      // 访问的是个人主页
+      const newData = { token, userName: username };
+      getMyUserInfo(newData).then((myResData) => {
+        if (myResData) {
           // 个人信息主页
           setIsMySelf(true);
-          setUserInfo(resData);
+          setUserInfo(myResData);
           setLoading(false);
 
           // 更新修改时显示的信息
-          setUsername(resData.userName);
-          setEmail(resData.userEmail);
-          setSelectedAvatar(resData.userImageUrl);
-          setSelectedGrade(resData.userGrade);
-          setSelectedMajor(resData.userMajor);
-          setDesc(resData.userDesc);
+          setUsername(myResData.userName);
+          setEmail(myResData.userEmail);
+          setSelectedAvatar(myResData.userImageUrl);
+          setSelectedGrade(myResData.userGrade);
+          setSelectedMajor(myResData.userMajor);
+          setDesc(myResData.userDesc);
+        }
+      });
+    }
+  }, [params]);
 
-          const newData = { token, userName: resData.userName };
-          // 请求帖子列表部分的信息
-          // 我的提问
-          getMyQuestions(newData).then((quesResData) => {
-            if (quesResData) {
-              setUserQuesList(
-                quesResData.questions ? quesResData.questions : []
-              );
-            }
-          });
-          // 我的回答
-          getMyAnswers(newData).then((ansResData) => {
-            if (ansResData) {
-              setUserAnsList(ansResData.answers ? ansResData.answers : []);
-            }
-          });
-          // 我的浏览历史
-          getMyViews(data).then((viewResData) => {
-            if (viewResData) {
-              setUserViewList(viewResData.myViews ? viewResData.myViews : []);
-            }
-          });
+  useEffect(() => {
+    // 用户的提问
+    if (loading) return;
+    // 此时个人信息已加载完成
+    const { username, token } = getSelf();
+    const quesData = {
+      token: token!,
+      userName: isMySelf ? username! : showUserName,
+      num: quesCurPage,
+      pageSize,
+    };
+    console.log("quesData", quesData);
+
+    getMyQuestions(quesData).then((quesResData) => {
+      if (quesResData) {
+        setUserQuesList(quesResData.questions ? quesResData.questions : []);
+        setQuesTotalPage(quesResData.pageSum);
+        console.log("quesResData.pageSum", quesResData.pageSum);
+      }
+    });
+  }, [quesCurPage, showUserName, loading, isMySelf]);
+
+  useEffect(() => {
+    // 用户的回答
+    if (loading) return;
+    // 此时个人信息已加载完成
+    const { username, token } = getSelf();
+    const ansData = {
+      token: token!,
+      userName: isMySelf ? username! : showUserName,
+      num: ansCurPage,
+      pageSize,
+    };
+    console.log("ansData", ansData);
+
+    getMyAnswers(ansData).then((ansResData) => {
+      if (ansResData) {
+        console.log("dada", ansResData.myAnswers);
+
+        setUserAnsList(ansResData.myAnswers ? ansResData.myAnswers : []);
+        setAnsTotalPage(ansResData.pageSum);
+      }
+    });
+  }, [ansCurPage, showUserName, loading, isMySelf]);
+
+  useEffect(() => {
+    // 用户浏览历史
+    if (loading) return;
+    // 此时个人信息已加载完成
+    const { username, token } = getSelf();
+    const data = {
+      token: token!,
+      userName: isMySelf ? username! : showUserName,
+    };
+    console.log("viewData", data);
+
+    getMyViews(data).then((viewResData) => {
+      if (viewResData) {
+        setUserViewList(viewResData.myViews ? viewResData.myViews : []);
+
+        if (viewResData.myViews) {
+          setViewTotalPage(Math.ceil(viewResData.myViews.length / pageSize));
         }
       }
     });
-  }, [params]);
+  }, [showUserName, loading, isMySelf]);
 
   return (
     <div className="about">
@@ -449,35 +528,66 @@ const About = () => {
                     {userQuesList.length > 0
                       ? userQuesList.map((userQues) => (
                           <AboutQuesBar
+                            key={userQues.questionId}
                             title={userQues.questionTitle}
-                            timeStamp={userQues.latestAnswerTime}
+                            timeStamp={userQues.createTime}
                             isSolved={userQues.hasAdoption}
                             ansCount={userQues.answerCount}
                           />
                         ))
                       : "暂时空空如也呢......"}
+                    {quesTotalPage > 1 ? (
+                      <MyPagination
+                        totalPage={quesTotalPage}
+                        curPage={quesCurPage}
+                        setCurPage={setQuesCurPage}
+                      />
+                    ) : (
+                      <></>
+                    )}
                   </div>
                 </TabPane>
                 <TabPane tab={`${isMySelf ? "我" : "TA "}的回答`} itemKey="ans">
                   <div className="about-x-list-wrapper">
                     {userAnsList.length > 0
-                      ? userAnsList.map((userAns) => (
-                          <AboutAnsBar
-                            title={userAns.questionTitle}
-                            timeStamp={userAns.answerTime}
-                            isSolved={userAns.hasAdoption}
-                            isSolvedByMe={userAns.isMineAdoption}
-                          />
-                        ))
+                      ? userAnsList.map((userAns) => {
+                          return (
+                            <AboutAnsBar
+                              key={userAns.questionId + userAns.answerTime}
+                              title={userAns.questionTitle}
+                              timeStamp={userAns.answerTime}
+                              isSolved={userAns.hasAdoption}
+                              isSolvedByMe={userAns.isMineAdoption}
+                            />
+                          );
+                        })
                       : "暂时空空如也呢......"}
+                    {ansTotalPage > 1 ? (
+                      <MyPagination
+                        totalPage={ansTotalPage}
+                        curPage={ansCurPage}
+                        setCurPage={setAnsCurPage}
+                      />
+                    ) : (
+                      <></>
+                    )}
                   </div>
                 </TabPane>
                 {isMySelf ? (
                   <TabPane tab="浏览记录" itemKey="history">
                     <div className="about-x-list-wrapper">
                       {userViewList.length > 0
-                        ? userViewList.map((userView) => (
+                        ? [
+                            ...userViewList.slice(
+                              (viewCurPage - 1) * pageSize,
+                              Math.min(
+                                userViewList.length,
+                                viewCurPage * pageSize
+                              )
+                            ),
+                          ].map((userView) => (
                             <AboutHistoryBar
+                              key={userView.question.questionID}
                               title={userView.question.questionTitle}
                               timeStamp={userView.viewTime}
                               isSolved={userView.question.hasAdopt}
@@ -485,6 +595,15 @@ const About = () => {
                             />
                           ))
                         : "暂时空空如也呢......"}
+                      {viewTotalPage > 1 ? (
+                        <MyPagination
+                          totalPage={viewTotalPage}
+                          curPage={viewCurPage}
+                          setCurPage={setViewCurPage}
+                        />
+                      ) : (
+                        <></>
+                      )}
                     </div>
                   </TabPane>
                 ) : (

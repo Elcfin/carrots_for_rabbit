@@ -1,13 +1,7 @@
 import "./index.scss";
 
-import {
-  IconChevronLeft,
-  IconChevronRight,
-  IconDelete,
-  IconDeleteStroked,
-  IconFullScreenStroked,
-} from "@douyinfe/semi-icons";
-import { Carousel, Button, SplitButtonGroup } from "@douyinfe/semi-ui";
+import { IconChevronLeft, IconChevronRight } from "@douyinfe/semi-icons";
+import { Carousel, Button } from "@douyinfe/semi-ui";
 import { useCallback, useEffect, useState } from "react";
 
 interface MyCarouselPropsType {
@@ -66,7 +60,6 @@ const MyCarousel = (props: MyCarouselPropsType) => {
           <></>
         )}
       </div>
-
       <Carousel
         activeIndex={activeIndex}
         onChange={(index) => {

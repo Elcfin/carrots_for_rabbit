@@ -3,6 +3,8 @@ import request from "../../request";
 export interface GetMyAnswersDataReq {
   token: string;
   userName: string;
+  pageSize: number;
+  num: number;
 }
 
 export type UserAnswerItemType = {
@@ -11,10 +13,12 @@ export type UserAnswerItemType = {
   isMineAdoption: boolean;
   hasAdoption: boolean;
   answerTime: number;
+  questionId: number;
 };
 
 export type GetMyAnswersDataRes = {
-  answers: UserAnswerItemType[];
+  myAnswers: UserAnswerItemType[];
+  pageSum: number;
 };
 
 export async function getMyAnswers(

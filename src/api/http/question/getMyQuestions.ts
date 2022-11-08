@@ -3,17 +3,21 @@ import request from "../../request";
 export interface GetMyQuestionsDataReq {
   token: string;
   userName: string;
+  pageSize: number;
+  num: number;
 }
 
 export type UserQuestionItemType = {
   questionTitle: string;
   answerCount: number;
   hasAdoption: boolean;
-  latestAnswerTime: number;
+  createTime: number;
+  questionId: number;
 };
 
 export type GetMyQuestionsDataRes = {
   questions: UserQuestionItemType[];
+  pageSum: number;
 };
 
 export async function getMyQuestions(

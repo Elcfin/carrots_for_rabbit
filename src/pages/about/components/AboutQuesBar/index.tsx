@@ -1,6 +1,7 @@
 import "./index.scss";
 import { Typography, Card, Button } from "@douyinfe/semi-ui";
 import { useScreen } from "../../../../hooks/useScreen";
+import { getDateString } from "../../../../utils/getDateString";
 
 interface AboutQuesBarPropsType {
   title: string;
@@ -46,9 +47,7 @@ const AboutQuesBar = (props: AboutQuesBarPropsType) => {
 
             <div className="about-ques-bar-main-bottom-info">
               <Text style={{ color: "var(--semi-color-text-2)" }}>
-                {`提问时间：${date.getFullYear()} 年 ${
-                  date.getMonth() + 1
-                } 月 ${date.getDay()} 日 `}
+                {`提问时间：${getDateString(timeStamp)}`}
               </Text>
             </div>
           </div>

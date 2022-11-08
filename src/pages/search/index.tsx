@@ -1,4 +1,4 @@
-import { TabPane, Tabs } from "@douyinfe/semi-ui";
+import { Pagination, TabPane, Tabs } from "@douyinfe/semi-ui";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import {
@@ -13,6 +13,21 @@ const Search = () => {
   const [quesList, setQuesList] = useState<QuestionListItemType[]>([]);
   const params = useParams();
 
+  const [totalPage, setTotalPage] = useState<number>(1);
+  const [curPage, setCurPage] = useState<number>(1);
+  const pageSize = 10;
+
+  const MyPagination = () => (
+    <Pagination
+      total={totalPage * pageSize}
+      style={{ margin: "auto", marginBottom: 12 }}
+      currentPage={curPage}
+      onPageChange={(v) => {
+        setCurPage(v);
+      }}
+    />
+  );
+
   useEffect(() => {
     if (params.keyword) {
       setKeyword(params.keyword);
@@ -21,16 +36,17 @@ const Search = () => {
 
   useEffect(() => {
     if (keyword) {
-      const data = { searchString: keyword };
+      const data = { searchString: keyword, pageSize, num: curPage };
       getSearchedQuestions(data).then((resData) => {
         if (resData) {
           setQuesList(resData.questions ? resData.questions : []);
+          setTotalPage(resData.pageSum);
         }
       });
     } else {
       setQuesList([]);
     }
-  }, [keyword]);
+  }, [keyword, curPage]);
 
   return (
     <div className="search">
@@ -55,6 +71,13 @@ const Search = () => {
                   />
                 ))
               : "暂时空空如也呢......"}
+            {totalPage > 1 ? (
+              <div className="search-results-pagination">
+                <MyPagination />
+              </div>
+            ) : (
+              <></>
+            )}
           </div>
         </TabPane>
       </Tabs>

@@ -15,6 +15,8 @@ import {
   getLatestQuestions,
   QuestionListItemType,
 } from "../../api/http/question/getLatestQuestions";
+import { getIsLogin } from "../../utils/getSelf";
+import { showToast } from "../../utils/showToast";
 
 const useHome = () => {
   const [activeTabKey, setActiveTabKey] = useState("new");
@@ -24,6 +26,7 @@ const useHome = () => {
   const [totalPage, setTotalPage] = useState<number>(1);
   const [curPage, setCurPage] = useState<number>(1);
   const pageSize = 10;
+
   useEffect(() => {
     getLatestQuestions({ pageSize, num: curPage }).then((resData) => {
       if (resData) {
@@ -60,11 +63,11 @@ const Home = () => {
     recommendQuesList,
   } = useHome();
   const navigate = useNavigate();
+  const isLogin = getIsLogin();
 
   const MyPagination = () => (
     <Pagination
       total={totalPage * pageSize}
-      /* showTotal */
       style={{ marginBottom: 12 }}
       currentPage={curPage}
       onPageChange={(v) => {
@@ -105,6 +108,10 @@ const Home = () => {
             <Button
               theme="solid"
               onClick={() => {
+                if (!isLogin) {
+                  showToast("需要先登录才能发布问题", "info");
+                  return;
+                }
                 navigate("/ask_ques");
               }}
             >
@@ -144,25 +151,30 @@ const Home = () => {
             )}
           </div>
         </TabPane>
-        <TabPane tab="为我推送" itemKey="recommend">
-          <div className="home-recommend">
-            {recommendQuesList.length > 0
-              ? recommendQuesList.map((ques) => (
-                  <QuestionBar
-                    questionId={ques.questionID}
-                    isSolved={ques.hasAdopt}
-                    content={ques.questionContent}
-                    answerCount={ques.answerCount}
-                    title={ques.questionTitle}
-                    tagList={ques.tags ? ques.tags : []}
-                    username={ques.userName}
-                    timeStamp={ques.latestAnswerTime}
-                    isRecommend={false}
-                  />
-                ))
-              : "暂时空空如也呢......"}
-          </div>
-        </TabPane>
+        {/* 在登录状态下才显示推送部分 */}
+        {isLogin ? (
+          <TabPane tab="为我推送" itemKey="recommend">
+            <div className="home-recommend">
+              {recommendQuesList.length > 0
+                ? recommendQuesList.map((ques) => (
+                    <QuestionBar
+                      questionId={ques.questionID}
+                      isSolved={ques.hasAdopt}
+                      content={ques.questionContent}
+                      answerCount={ques.answerCount}
+                      title={ques.questionTitle}
+                      tagList={ques.tags ? ques.tags : []}
+                      username={ques.userName}
+                      timeStamp={ques.latestAnswerTime}
+                      isRecommend={false}
+                    />
+                  ))
+                : "暂时空空如也呢......"}
+            </div>
+          </TabPane>
+        ) : (
+          <></>
+        )}
       </Tabs>
     </div>
   );

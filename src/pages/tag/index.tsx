@@ -53,7 +53,6 @@ const Tag = () => {
   const MyPagination = () => (
     <Pagination
       total={totalPage * pageSize}
-      /* showTotal */
       style={{ marginBottom: 12 }}
       currentPage={curPage}
       onPageChange={(v) => {
@@ -89,7 +88,7 @@ const Tag = () => {
                 ))
               : "暂时空空如也呢......"}
             {totalPage > 1 ? (
-              <div className="home-new-pagination">
+              <div className="tag-x-pagination">
                 <MyPagination />
               </div>
             ) : (
