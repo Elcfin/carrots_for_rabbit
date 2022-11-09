@@ -15,17 +15,27 @@ import {
   getLatestQuestions,
   QuestionListItemType,
 } from "../../api/http/question/getLatestQuestions";
-import { getIsLogin } from "../../utils/getSelf";
+import { getIsLogin, getSelf } from "../../utils/getSelf";
 import { showToast } from "../../utils/showToast";
+import {
+  getRecommendQuestions,
+  QuestionItemType,
+} from "../../api/http/user/getRecommendQuestions";
+import { IconSync } from "@douyinfe/semi-icons";
 
-const useHome = () => {
+const Home = () => {
   const [activeTabKey, setActiveTabKey] = useState("new");
   const [isAsker, setIsAsker] = useState(false);
   const [quesList, setQuesList] = useState<QuestionListItemType[]>([]);
-  const [recommendQuesList, setRecommendQuesList] = useState<any[]>([]);
+  const [recommendQuesList, setRecommendQuesList] = useState<
+    QuestionItemType[]
+  >([]);
   const [totalPage, setTotalPage] = useState<number>(1);
   const [curPage, setCurPage] = useState<number>(1);
+  const [updateFlag, setUpdateFlag] = useState(false);
   const pageSize = 10;
+  const isLogin = getIsLogin();
+  const navigate = useNavigate();
 
   useEffect(() => {
     getLatestQuestions({ pageSize, num: curPage }).then((resData) => {
@@ -34,36 +44,20 @@ const useHome = () => {
         setTotalPage(resData.pageSum);
       }
     });
-  }, [curPage]);
-  return {
-    activeTabKey,
-    setActiveTabKey,
-    isAsker,
-    setIsAsker,
-    quesList,
-    totalPage,
-    pageSize,
-    setCurPage,
-    curPage,
-    recommendQuesList,
-  };
-};
+  }, [curPage, updateFlag, isAsker, isLogin]);
 
-const Home = () => {
-  const {
-    activeTabKey,
-    setActiveTabKey,
-    isAsker,
-    setIsAsker,
-    quesList,
-    totalPage,
-    pageSize,
-    setCurPage,
-    curPage,
-    recommendQuesList,
-  } = useHome();
-  const navigate = useNavigate();
-  const isLogin = getIsLogin();
+  useEffect(() => {
+    if (activeTabKey !== "recommend") return;
+    if (!isLogin) return;
+    const { token } = getSelf();
+
+    const data = { token: token!, prefer: isAsker };
+    getRecommendQuestions(data).then((resData) => {
+      if (resData) {
+        setRecommendQuesList(resData.questions ? resData.questions : []);
+      }
+    });
+  }, [updateFlag, isAsker, isLogin, activeTabKey]);
 
   const MyPagination = () => (
     <Pagination
@@ -103,6 +97,12 @@ const Home = () => {
                     }}
                   />
                 </Tooltip>
+                <Button
+                  onClick={() => {
+                    setUpdateFlag((updateFlag) => !updateFlag);
+                  }}
+                  icon={<IconSync />}
+                />
               </>
             )}
             <Button
@@ -126,6 +126,7 @@ const Home = () => {
             {quesList.length > 0
               ? quesList.map((ques) => (
                   <QuestionBar
+                    key={ques.questionID}
                     questionId={ques.questionID}
                     isSolved={ques.hasAdopt}
                     content={ques.questionContent}
@@ -158,6 +159,7 @@ const Home = () => {
               {recommendQuesList.length > 0
                 ? recommendQuesList.map((ques) => (
                     <QuestionBar
+                      key={ques.questionID}
                       questionId={ques.questionID}
                       isSolved={ques.hasAdopt}
                       content={ques.questionContent}

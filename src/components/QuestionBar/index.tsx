@@ -59,8 +59,8 @@ const QuestionBar = (props: QuestionBarPropsType) => {
 
           <div className="question-bar-main-content">
             <Paragraph ellipsis={{ rows: 2 }}>
-              {content.split("\n").map((p) => (
-                <Paragraph>{p}</Paragraph>
+              {content.split("\n").map((p, index) => (
+                <Paragraph key={index}>{p}</Paragraph>
               ))}
             </Paragraph>
           </div>
@@ -77,6 +77,7 @@ const QuestionBar = (props: QuestionBarPropsType) => {
               <div className="question-bar-main-bottom-tags">
                 {tagList.map((tag) => (
                   <Button
+                    key={tag}
                     size="small"
                     theme="light"
                     style={{ color: "var(--semi-color-text-2)" }}

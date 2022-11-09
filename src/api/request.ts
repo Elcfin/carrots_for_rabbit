@@ -53,9 +53,12 @@ export default async function _request<Data>(
 
   if (config.method?.toLowerCase() !== "get" && !extra?.bypassThrottle) {
     const key = config2Str(config);
-    if (requestMap.has(key)) return null;
+    if (requestMap.has(key)) {
+      return null;
+    }
 
-    requestMap.add(config2Str(config));
+    requestMap.add(key);
+
     onFinally = showToast("请求中...", "info", { duration: 99999 });
   }
 
@@ -112,6 +115,7 @@ export default async function _request<Data>(
     return null;
   } finally {
     requestMap.delete(config2Str(config));
+
     onFinally();
   }
 }

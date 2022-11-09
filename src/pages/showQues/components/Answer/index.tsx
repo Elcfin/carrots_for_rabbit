@@ -2,6 +2,7 @@ import {
   IconDislikeThumb,
   IconLikeThumb,
   IconMoreStroked,
+  IconSendStroked,
 } from "@douyinfe/semi-icons";
 import {
   Avatar,
@@ -38,6 +39,10 @@ import {
   DeleteAnswerDataReq,
 } from "../../../../api/http/answer/deleteAnswer";
 import { useNavigate } from "react-router";
+import {
+  adoptAnswer,
+  AdoptAnswerDataReq,
+} from "../../../../api/http/answer/adoptAnswer";
 interface AnswerProps {
   answerId: number;
   answerWriter: string;
@@ -47,6 +52,7 @@ interface AnswerProps {
   likesCount: number;
   isAdopted: boolean;
   setUpdateAnswers: React.Dispatch<React.SetStateAction<boolean>>;
+  isShowAdoptBtn: boolean;
 }
 
 const Answer = (props: AnswerProps) => {
@@ -57,7 +63,9 @@ const Answer = (props: AnswerProps) => {
     content,
     answerId,
     likesCount,
+    isAdopted,
     setUpdateAnswers,
+    isShowAdoptBtn,
   } = props;
   const { Text, Paragraph } = Typography;
 
@@ -81,14 +89,13 @@ const Answer = (props: AnswerProps) => {
   }, [answerId, updateComments]);
 
   const handlePublishComment = async () => {
-    if (!commentContent) {
-      showToast("评论内容不能为空", "info");
-      return;
-    }
     const { token } = getSelf();
     if (!token) {
-      showToast("身份信息失效，请重新登录", "info");
-      removeSelf();
+      showToast("需要先登录才可以评论", "info");
+      return;
+    }
+    if (!commentContent) {
+      showToast("评论内容不能为空", "info");
       return;
     }
 
@@ -167,9 +174,41 @@ const Answer = (props: AnswerProps) => {
             setIsWrite((isWrite) => !isWrite);
           }}
         >
-          回复
+          <Text>回复</Text>
         </div>
         <div className="answer-bottom-actions">
+          {isAdopted ? (
+            <Button
+              style={{ color: "var(--semi-color-carrot)", cursor: "default" }}
+              disabled
+              size="small"
+            >
+              已采纳回答
+            </Button>
+          ) : isShowAdoptBtn ? (
+            <Button
+              onClick={async () => {
+                const { token } = getSelf();
+                if (!token) {
+                  showToast("身份信息失效，请重新登录", "info");
+                  removeSelf();
+                  return;
+                }
+                const data: AdoptAnswerDataReq = { token, answerId };
+                const resData = await adoptAnswer(data);
+                if (resData) {
+                  showToast("采纳成功", "info");
+                  setUpdateAnswers((updateAnswers) => !updateAnswers);
+                }
+              }}
+              size="small"
+            >
+              采纳
+            </Button>
+          ) : (
+            <></>
+          )}
+
           <Button
             onClick={() => {
               handleLikeBtnClick(answerId);

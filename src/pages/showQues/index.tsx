@@ -340,6 +340,7 @@ const ShowQues = () => {
                   <>
                     {index ? <Divider margin="8px" /> : <></>}
                     <Answer
+                      isShowAdoptBtn={isMySelf}
                       setUpdateAnswers={setUpdateAnswers}
                       answerId={ans.answerId}
                       answerWriter={ans.userName}
