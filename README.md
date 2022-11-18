@@ -43,6 +43,6 @@ $ npm run start
 # The server will initialize in the <http://localhost:3000>
 ```
 
-## :memo: License
+## license
 
 This project is under license from MIT. For more details, see the [LICENSE](LICENSE.md) file.
