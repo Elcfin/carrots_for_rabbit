@@ -23,7 +23,7 @@ The following tools were used in this project:
 
 - [React](https://reactjs.org/)
 - [TypeScript](https://www.typescriptlang.org/)
-- [sass]([Sass: Syntactically Awesome Style Sheets (sass-lang.com)](https://sass-lang.com/))
+- [sass](https://sass-lang.com/)
 
 ## requirements
 
