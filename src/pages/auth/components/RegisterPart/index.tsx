@@ -16,6 +16,7 @@ import { showToast } from "../../../../utils/showToast";
 const useRegister = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [conPassword, setConPassword] = useState("");
   const [email, setEmail] = useState("");
   const [isAsker, setIsAsker] = useState(false);
 
@@ -38,6 +39,8 @@ const useRegister = () => {
     setSelectedGrade,
     selectedMajor,
     setSelectedMajor,
+    conPassword,
+    setConPassword,
   };
 };
 
@@ -63,6 +66,8 @@ const RegisterPart = (props: RegisterPartProps) => {
     setSelectedGrade,
     selectedMajor,
     setSelectedMajor,
+    conPassword,
+    setConPassword,
   } = useRegister();
 
   const handleRegisterBtnClick = async () => {
@@ -87,6 +92,14 @@ const RegisterPart = (props: RegisterPartProps) => {
       showToast("请输入密码", "info");
       return;
     }
+    if (!conPassword) {
+      showToast("请确认密码", "info");
+      return;
+    }
+    if (password !== conPassword) {
+      showToast("两次密码不一致", "info");
+      return;
+    }
     if (!email) {
       showToast("请输入邮箱", "info");
       return;
@@ -109,6 +122,7 @@ const RegisterPart = (props: RegisterPartProps) => {
       /* 初始化表单数据 */
       setUsername("");
       setPassword("");
+      setConPassword("");
       setEmail("");
       setIsAsker(false);
       setSelectedTags([]);
@@ -120,7 +134,7 @@ const RegisterPart = (props: RegisterPartProps) => {
   return (
     <div className="auth-x-register">
       <Input
-        placeholder="用户名"
+        placeholder="请输入用户名"
         value={username}
         onChange={async (v) => {
           setUsername(v);
@@ -138,7 +152,7 @@ const RegisterPart = (props: RegisterPartProps) => {
         }}
       />
       <Input
-        placeholder="密码"
+        placeholder="请输入密码"
         mode="password"
         value={password}
         onChange={(v) => {
@@ -146,7 +160,15 @@ const RegisterPart = (props: RegisterPartProps) => {
         }}
       />
       <Input
-        placeholder="邮箱"
+        placeholder="请确认密码"
+        mode="password"
+        value={conPassword}
+        onChange={(v) => {
+          setConPassword(v);
+        }}
+      />
+      <Input
+        placeholder="请输入邮箱"
         value={email}
         onChange={(v) => {
           setEmail(v);

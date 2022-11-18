@@ -34,7 +34,7 @@ const TagPart = (props: TagPartPropsType) => {
       >
         <Paragraph
           ellipsis={{ rows: 2 }}
-          style={{ height: isMobile ? "auto" : 40 }}
+          style={{ height: isMobile ? "auto" : 40, wordBreak: "break-all" }}
         >
           {desc}
         </Paragraph>

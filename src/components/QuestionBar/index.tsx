@@ -4,6 +4,8 @@ import { useScreen } from "../../hooks/useScreen";
 import { IconHeartStroked, IconMoreStroked } from "@douyinfe/semi-icons";
 import { useNavigate } from "react-router";
 import { getDateString } from "../../utils/getDateString";
+import { getIsLogin } from "../../utils/getSelf";
+import { showToast } from "../../utils/showToast";
 
 interface QuestionBarPropsType {
   questionId: number;
@@ -32,7 +34,7 @@ const QuestionBar = (props: QuestionBarPropsType) => {
   } = props;
   const { isMobile } = useScreen();
   const navigate = useNavigate();
-  const date = new Date(timeStamp);
+  const isLogin = getIsLogin();
 
   return (
     <Card
@@ -60,7 +62,9 @@ const QuestionBar = (props: QuestionBarPropsType) => {
           <div className="question-bar-main-content">
             <Paragraph ellipsis={{ rows: 2 }}>
               {content.split("\n").map((p, index) => (
-                <Paragraph key={index}>{p}</Paragraph>
+                <Paragraph key={index} style={{ wordBreak: "break-all" }}>
+                  {p}
+                </Paragraph>
               ))}
             </Paragraph>
           </div>
@@ -97,6 +101,10 @@ const QuestionBar = (props: QuestionBarPropsType) => {
                   <Text
                     link
                     onClick={() => {
+                      if (!isLogin) {
+                        showToast("需要先登录才可以查看用户信息", "info");
+                        return;
+                      }
                       navigate(`/about/${username}`);
                     }}
                   >

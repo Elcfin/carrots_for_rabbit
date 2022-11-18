@@ -54,7 +54,7 @@ export type TagNameType =
   | "数据结构"
   | "数据库"
   /* 一些常用编程语言，暂时能想到的 */
-  | "C/C++"
+  | "C-C++"
   | "Java"
   | "Python"
   | "其他语言"
@@ -67,7 +67,7 @@ export const TAGNAMELIST: TagNameType[] = [
   "算法",
   "数据结构",
   "数据库",
-  "C/C++",
+  "C-C++",
   "Java",
   "Python",
   "其他语言",
@@ -91,7 +91,7 @@ export const TAGINFOLIST: TagInfoItemType[] = [
     name: "数据库",
     desc: "按照数据结构来组织、存储和管理数据的仓库  - ̗̀(๑ᵔ⌔ᵔ๑)",
   },
-  { name: "C/C++", desc: "或许是你学习的第一门程序设计语言 | ू•ૅω•́)ᵎᵎᵎ" },
+  { name: "C-C++", desc: "或许是你学习的第一门程序设计语言 | ू•ૅω•́)ᵎᵎᵎ" },
   {
     name: "Java",
     desc: "一种可以撰写跨平台应用软件的面向对象的程序设计语言 ૧(●´৺`●)૭",

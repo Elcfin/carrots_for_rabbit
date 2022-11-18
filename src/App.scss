@@ -1,22 +1,19 @@
 .app {
   background-color: var(--semi-color-bg-1);
-  min-height: 100vh;
+  /* 100px 是备案信息的高度 */
+  min-height: calc(100vh - 100px);
   max-width: 1440px;
   margin: auto;
 
-  /*   &-background {
-    position: fixed;
-    width: 100vw;
-    height: 300px;
-    left: 0;
-    top: 0;
-    background-color: var(--semi-color-primary);
-  }
- */
+  /* 使备案信息留存在底部 */
+  position: relative;
+  padding-bottom: 100px;
+
   &-main {
     position: relative;
     margin: auto;
     padding: 20px;
+    padding-bottom: 0;
     padding-top: 0;
     max-width: 920px;
     background-color: var(--semi-color-bg-1);
@@ -26,6 +23,7 @@
     @media (min-width: 680px) {
       // PC端
       padding: 40px;
+      padding-bottom: 0;
       padding-top: 0;
     }
   }

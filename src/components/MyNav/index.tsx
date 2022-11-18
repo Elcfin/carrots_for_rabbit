@@ -142,7 +142,8 @@ const MyNav = () => {
             handleModalSearch();
           }}
           onCancel={() => {
-            handleModalSearch();
+            setContent("");
+            setIsModalShow(false);
           }}
           okText={"搜索"}
           cancelText={"取消"}

@@ -129,7 +129,7 @@ const About = () => {
     if (!isLogin || !token || !username) {
       // 为了防止下面使用 token 时报错
       // 用 (!isLogin) 其实就可以
-      showToast("需要先登录才能查看用户信息", "info");
+      showToast("需要先登录才可以查看用户信息", "info");
       removeSelf();
       return;
     }
@@ -300,6 +300,7 @@ const About = () => {
                   style={{
                     color: "var(--semi-color-text-2)",
                     textAlign: "center",
+                    wordBreak: "break-all",
                   }}
                 >
                   {userInfo?.userDesc}
@@ -346,6 +347,10 @@ const About = () => {
                         ...userInfo,
                         token,
                       };
+                      if (!email) {
+                        showToast("请输入邮箱", "info");
+                        return;
+                      }
                       data.userEmail = email;
                       data.userGrade = selectedGrade;
                       data.userMajor = selectedMajor;

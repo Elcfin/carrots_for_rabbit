@@ -78,7 +78,7 @@ export default async function _request<Data>(
       /**
        * 其他情况(后端正常的报错)
        */
-      throw res.data.error || DEFAULT_ERR_MSG;
+      throw res.data.msg || DEFAULT_ERR_MSG;
     }
   } catch (err) {
     console.log("Error in request: ", { config, err });

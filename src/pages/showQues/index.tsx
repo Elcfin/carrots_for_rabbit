@@ -15,7 +15,12 @@ import { useNavigate, useParams } from "react-router";
 import { useEffect, useState } from "react";
 import MyCarousel from "../../components/MyCarousel";
 import { useScreen } from "../../hooks/useScreen";
-import { getIsManager, getSelf, removeSelf } from "../../utils/getSelf";
+import {
+  getIsLogin,
+  getIsManager,
+  getSelf,
+  removeSelf,
+} from "../../utils/getSelf";
 import { showToast } from "../../utils/showToast";
 import {
   getConciseQuestionByQuestionId,
@@ -55,9 +60,10 @@ const ShowQues = () => {
   const [answerContent, setAnswerContent] = useState("");
   const [quesInfo, setQuesInfo] = useState<GetConciseQuestionByQuestionIdRes>();
   const [ansList, setAnsList] = useState<AnswerItemType[]>([]);
-  const [curLikesCount, setCurLikesCount] = useState(0);
+
   const [updateAnswers, setUpdateAnswers] = useState(false);
   const isManager = getIsManager();
+  const isLogin = getIsLogin();
 
   useEffect(() => {
     if (!params.id) {
@@ -82,7 +88,6 @@ const ShowQues = () => {
           const { username } = getSelf();
           if (username) setIsMySelf(resData.userName === username);
           setQuesInfo(resData);
-          setCurLikesCount(resData.likesCount);
           const newData: GetAllAnswerOfQuestionDataReq = {
             questionId: pId,
           };
@@ -148,7 +153,11 @@ const ShowQues = () => {
     const resData = await likeQuestion(data);
     if (resData) {
       showToast("点赞成功", "info");
-      setCurLikesCount((curLikesCount) => curLikesCount + 1);
+      const newData = { questionId: quesInfo.questionID, token };
+      const resNewData = await getConciseQuestionByQuestionId(newData);
+      if (resNewData) {
+        setQuesInfo(resNewData);
+      }
     }
   };
 
@@ -219,6 +228,10 @@ const ShowQues = () => {
                 <Text
                   link
                   onClick={() => {
+                    if (!isLogin) {
+                      showToast("需要先登录才可以查看用户详细信息", "info");
+                      return;
+                    }
                     if (quesInfo?.userName)
                       navigate(`/about/${quesInfo?.userName}`);
                   }}
@@ -246,7 +259,7 @@ const ShowQues = () => {
             <div className="show_ques-x-content">
               <Paragraph spacing="extended">
                 {quesInfo?.content.split("\n").map((p) => (
-                  <Paragraph>{p}</Paragraph>
+                  <Paragraph style={{ wordBreak: "break-all" }}>{p}</Paragraph>
                 ))}
               </Paragraph>
             </div>
@@ -276,7 +289,7 @@ const ShowQues = () => {
                   />
                 }
               >
-                {curLikesCount}
+                {quesInfo?.likesCount}
               </Button>
               <Dropdown
                 trigger={"hover"}
@@ -340,6 +353,7 @@ const ShowQues = () => {
                   <>
                     {index ? <Divider margin="8px" /> : <></>}
                     <Answer
+                      key={ans.answerId}
                       isShowAdoptBtn={isMySelf}
                       setUpdateAnswers={setUpdateAnswers}
                       answerId={ans.answerId}
@@ -357,11 +371,12 @@ const ShowQues = () => {
           ) : (
             <></>
           )}
-          {!isMySelf && !hasIAnswered ? (
+          {isLogin && !isMySelf && !hasIAnswered ? (
             <>
               <Divider margin="12px" align="center">
                 {`撰写回答`}
               </Divider>
+
               <div
                 className="show_ques-write"
                 style={{ boxShadow: "rgba(0, 0, 0, 0.05) 0px 1px 1px" }}

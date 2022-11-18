@@ -21,7 +21,12 @@ import Comment from "../Comment";
 import { getDateString } from "../../../../utils/getDateString";
 import "./index.scss";
 import { showToast } from "../../../../utils/showToast";
-import { getIsManager, getSelf, removeSelf } from "../../../../utils/getSelf";
+import {
+  getIsLogin,
+  getIsManager,
+  getSelf,
+  removeSelf,
+} from "../../../../utils/getSelf";
 import {
   insertComment,
   InsertCommentDataReq,
@@ -72,11 +77,11 @@ const Answer = (props: AnswerProps) => {
   const [commentList, setCommentList] = useState<CommentItemType[]>([]);
   const [isWrite, setIsWrite] = useState(false);
   const [commentContent, setCommentContent] = useState("");
-  const [curLikesCount, setCurLikesCount] = useState(likesCount);
   const { username } = getSelf();
   const [isMySelf, setIsMySelf] = useState(answerWriter === username);
   const [updateComments, setUpdateComments] = useState(false);
   const isManager = getIsManager();
+  const isLogin = getIsLogin();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -126,7 +131,7 @@ const Answer = (props: AnswerProps) => {
     const resData = await likeAnswer(data);
     if (resData) {
       showToast("点赞成功", "info");
-      setCurLikesCount((curLikesCount) => curLikesCount + 1);
+      setUpdateAnswers((updateAnswers) => !updateAnswers);
     }
   };
   const handleUnlikeBtnClick = async (answerId: number) => {
@@ -150,6 +155,10 @@ const Answer = (props: AnswerProps) => {
           <Text
             link
             onClick={() => {
+              if (!isLogin) {
+                showToast("需要先登录才可以查看用户信息", "info");
+                return;
+              }
               navigate(`/about/${answerWriter}`);
             }}
           >
@@ -163,7 +172,7 @@ const Answer = (props: AnswerProps) => {
       <div className="answer-content">
         <Paragraph spacing="extended">
           {content.split("\n").map((p) => (
-            <Paragraph>{p}</Paragraph>
+            <Paragraph style={{ wordBreak: "break-all" }}>{p}</Paragraph>
           ))}
         </Paragraph>
       </div>
@@ -218,7 +227,7 @@ const Answer = (props: AnswerProps) => {
               <IconLikeThumb style={{ color: "var(--semi-color-text-2)" }} />
             }
           >
-            {curLikesCount}
+            {likesCount}
           </Button>
           <Dropdown
             trigger={"hover"}

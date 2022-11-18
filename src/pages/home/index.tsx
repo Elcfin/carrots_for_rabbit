@@ -22,6 +22,7 @@ import {
   QuestionItemType,
 } from "../../api/http/user/getRecommendQuestions";
 import { IconSync } from "@douyinfe/semi-icons";
+import { useScreen } from "../../hooks/useScreen";
 
 const Home = () => {
   const [activeTabKey, setActiveTabKey] = useState("new");
@@ -33,6 +34,7 @@ const Home = () => {
   const [totalPage, setTotalPage] = useState<number>(1);
   const [curPage, setCurPage] = useState<number>(1);
   const [updateFlag, setUpdateFlag] = useState(false);
+  const { isMobile } = useScreen();
   const pageSize = 10;
   const isLogin = getIsLogin();
   const navigate = useNavigate();
@@ -97,19 +99,21 @@ const Home = () => {
                     }}
                   />
                 </Tooltip>
-                <Button
+                {/* <Button
+                  size={isMobile ? "small" : "default"}
                   onClick={() => {
                     setUpdateFlag((updateFlag) => !updateFlag);
                   }}
                   icon={<IconSync />}
-                />
+                /> */}
               </>
             )}
             <Button
               theme="solid"
+              size={isMobile ? "small" : "default"}
               onClick={() => {
                 if (!isLogin) {
-                  showToast("需要先登录才能发布问题", "info");
+                  showToast("需要先登录才可以发布问题", "info");
                   return;
                 }
                 navigate("/ask_ques");
@@ -167,7 +171,11 @@ const Home = () => {
                       title={ques.questionTitle}
                       tagList={ques.tags ? ques.tags : []}
                       username={ques.userName}
-                      timeStamp={ques.latestAnswerTime}
+                      timeStamp={
+                        ques.latestAnswerTime > ques.questionTime
+                          ? ques.latestAnswerTime
+                          : ques.questionTime
+                      }
                       isRecommend={false}
                     />
                   ))

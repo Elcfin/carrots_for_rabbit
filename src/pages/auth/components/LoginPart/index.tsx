@@ -22,7 +22,6 @@ const useLogin = () => {
     }
     const res = await login({ userName: username, userPassword: password });
     if (!res) {
-      showToast("登录失败，请再次尝试", "info");
       return;
     }
     const data = { token: res.token };

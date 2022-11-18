@@ -1,20 +1,22 @@
 import "./App.scss";
-
 import { Routes, Route } from "react-router";
 import { routesObj } from "./routes";
 import MyNav from "./components/MyNav";
+import MyFooter from "./components/MyFooter";
 
-const App = () => (
-  <div className="app">
-    <MyNav />
-    <div className="app-main">
-      <Routes>
-        {routesObj.map((o) => {
-          return <Route {...o} key={o.path} />;
-        })}
-      </Routes>
+const App = () => {
+  return (
+    <div className="app">
+      <MyNav />
+      <div className="app-main">
+        <Routes>
+          {routesObj.map((o) => {
+            return <Route {...o} key={o.path} />;
+          })}
+        </Routes>
+      </div>
+      <MyFooter />
     </div>
-    <div className="app-background"></div>
-  </div>
-);
+  );
+};
 export default App;

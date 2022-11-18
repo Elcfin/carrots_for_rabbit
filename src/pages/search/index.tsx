@@ -66,7 +66,11 @@ const Search = () => {
                     title={ques.questionTitle}
                     tagList={ques.tags ? ques.tags : []}
                     username={ques.userName}
-                    timeStamp={ques.latestAnswerTime}
+                    timeStamp={
+                      ques.latestAnswerTime > ques.questionTime
+                        ? ques.latestAnswerTime
+                        : ques.questionTime
+                    }
                     isRecommend={false}
                   />
                 ))

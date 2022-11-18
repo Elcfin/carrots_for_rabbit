@@ -2,7 +2,12 @@ import "./index.scss";
 import { Button, Typography } from "@douyinfe/semi-ui";
 import { getDateString } from "../../../../utils/getDateString";
 import { useState } from "react";
-import { getIsManager, getSelf, removeSelf } from "../../../../utils/getSelf";
+import {
+  getIsLogin,
+  getIsManager,
+  getSelf,
+  removeSelf,
+} from "../../../../utils/getSelf";
 import {
   deleteComment,
   DeleteCommentDataReq,
@@ -25,6 +30,7 @@ const Comment = (prop: CommentProp) => {
   const { username } = getSelf();
   const [isMySelf, setIsMySelf] = useState(commentWriter === username);
   const isManager = getIsManager();
+  const isLogin = getIsLogin();
   const navigate = useNavigate();
   const handleDeleteBtnClick = async () => {
     const { token } = getSelf();
@@ -47,10 +53,16 @@ const Comment = (prop: CommentProp) => {
         link
         style={{ fontSize: 12 }}
         onClick={() => {
+          if (!isLogin) {
+            showToast("需要先登录才可以查看用户信息", "info");
+            return;
+          }
           navigate(`/about/${commentWriter}`);
         }}
       >{`${commentWriter}`}</Text>
-      <Text style={{ fontSize: 12 }}>{`：${content}`}</Text>
+      <Text
+        style={{ fontSize: 12, wordBreak: "break-all" }}
+      >{`：${content}`}</Text>
       <div
         style={{
           fontSize: 12,
