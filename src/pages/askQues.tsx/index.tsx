@@ -40,7 +40,7 @@ const AskQues = () => {
   const [imgs, setImgs] = useState<string[]>([]);
 
   useEffect(() => {
-    console.log("imgs", imgs);
+    /* console.log("imgs", imgs); */
   }, [imgs]);
 
   useEffect(() => {
@@ -248,7 +248,7 @@ const AskQues = () => {
                     }
                   }}
                   beforeClear={(v) => {
-                    console.log(v);
+                    /* console.log(v); */
                     return true;
                   }}
                 >

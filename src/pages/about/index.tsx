@@ -112,7 +112,7 @@ const About = () => {
     );
   };
   useEffect(() => {
-    console.log(userAnsList);
+    /* console.log(userAnsList); */
   }, [userAnsList]);
 
   useEffect(() => {
@@ -184,13 +184,13 @@ const About = () => {
       num: quesCurPage,
       pageSize,
     };
-    console.log("quesData", quesData);
+    /* console.log("quesData", quesData); */
 
     getMyQuestions(quesData).then((quesResData) => {
       if (quesResData) {
         setUserQuesList(quesResData.questions ? quesResData.questions : []);
         setQuesTotalPage(quesResData.pageSum);
-        console.log("quesResData.pageSum", quesResData.pageSum);
+        /* console.log("quesResData.pageSum", quesResData.pageSum); */
       }
     });
   }, [quesCurPage, showUserName, loading, isMySelf]);
@@ -206,11 +206,11 @@ const About = () => {
       num: ansCurPage,
       pageSize,
     };
-    console.log("ansData", ansData);
+    /* console.log("ansData", ansData); */
 
     getMyAnswers(ansData).then((ansResData) => {
       if (ansResData) {
-        console.log("dada", ansResData.myAnswers);
+        /* console.log("dada", ansResData.myAnswers); */
 
         setUserAnsList(ansResData.myAnswers ? ansResData.myAnswers : []);
         setAnsTotalPage(ansResData.pageSum);
@@ -227,7 +227,7 @@ const About = () => {
       token: token!,
       userName: isMySelf ? username! : showUserName,
     };
-    console.log("viewData", data);
+    /* console.log("viewData", data); */
 
     getMyViews(data).then((viewResData) => {
       if (viewResData) {
@@ -491,7 +491,7 @@ const About = () => {
                     };
                     // 在原本基础信息的基础上，更新头像
                     data.userImageUrl = selectedAvatar;
-                    console.log(data);
+                    /* console.log(data); */
 
                     const resData = await updateMyUserInfo(data);
                     if (resData) {

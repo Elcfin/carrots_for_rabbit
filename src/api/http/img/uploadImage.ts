@@ -14,10 +14,10 @@ export async function uploadImage(
     headers: { "Content-Type": "multipart/form-data" },
     transformRequest: (data, headers) => {
       const formData = new FormData();
-      console.log(data);
-      console.log(headers);
+      /* console.log(data); */
+      /* console.log(headers); */
       formData.set("image", data);
-      console.log(formData.get("image"));
+      /* console.log(formData.get("image")); */
       return formData;
     },
   });

@@ -65,7 +65,7 @@ export default async function _request<Data>(
   try {
     /** 执行请求 */
     const res = await instance.request<BaseHttpInfo<Data>>(config);
-    console.log("res", res);
+    /* console.log("res", res); */
     if (res.status === 200 && res.data && res.data.success) {
       const data = res.data.data;
       return data;
@@ -81,7 +81,7 @@ export default async function _request<Data>(
       throw res.data.msg || DEFAULT_ERR_MSG;
     }
   } catch (err) {
-    console.log("Error in request: ", { config, err });
+    /* console.log("Error in request: ", { config, err }); */
 
     let errMsg = DEFAULT_ERR_MSG;
     if (typeof err === "string") {

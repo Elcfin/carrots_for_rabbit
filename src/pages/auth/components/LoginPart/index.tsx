@@ -4,7 +4,12 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import { getMyUserInfo } from "../../../../api/http/user/getMyUserInfo";
 import { login } from "../../../../api/http/user/login";
-import { AUTH_KEY, TOKEN_KEY, USERNAME_KEY } from "../../../../constants/token";
+import {
+  AUTH_KEY,
+  EXPIRE_KEY,
+  TOKEN_KEY,
+  USERNAME_KEY,
+} from "../../../../constants/token";
 import { showToast } from "../../../../utils/showToast";
 
 const useLogin = () => {
@@ -31,6 +36,10 @@ const useLogin = () => {
       localStorage.setItem(TOKEN_KEY, res.token);
       localStorage.setItem(AUTH_KEY, res.authority.toString());
       localStorage.setItem(USERNAME_KEY, resData.userName);
+      localStorage.setItem(
+        EXPIRE_KEY,
+        (new Date().getTime() + 86400000 * 7).toString()
+      );
       navigate("/home");
       setUsername("");
       setPassword("");
